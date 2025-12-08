@@ -10,6 +10,17 @@ const router = createRouter({
     },
     // optional: keep Home route if needed
     {
+
+      path: '/contact-us',
+      name: 'ContactUs',
+      component: () => import('../views/ContactUsView.vue'),
+    },
+    {
+      path: '/shop',
+      name: 'shop',
+      component: () => import('../views/ShopView.vue'),
+    },  
+  ],
       path: '/home',
       name: 'home',
       component: () => import('../views/HomeView.vue')
