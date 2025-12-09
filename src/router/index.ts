@@ -4,13 +4,11 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',               // default route
-      name: 'ProductDetail',   // route name
+      path: '/product_detail',               // default route
+      name: 'ProductDetail',
       component: () => import('../views/ProductDetail.vue')
     },
-    // optional: keep Home route if needed
     {
-
       path: '/contact-us',
       name: 'ContactUs',
       component: () => import('../views/ContactUsView.vue'),
@@ -18,14 +16,14 @@ const router = createRouter({
     {
       path: '/shop',
       name: 'shop',
-      component: () => import('../views/ShopView.vue'),
-    },  
-  ],
-      path: '/home',
+      component: () => import('../views/ShopView.vue')
+    },
+    {
+      path: '/',
       name: 'home',
       component: () => import('../views/HomeView.vue')
     }
-  ]
+  ],
 })
 
 export default router

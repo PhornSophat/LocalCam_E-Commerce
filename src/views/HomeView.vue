@@ -9,7 +9,7 @@ import categories from '@/assets/categoryGiftSet2.png'
 import Handicraft from '@/assets/categoryGiftSet.png'
 import Toy from '@/assets/homePage.jpg'
 import food from '@/assets/homePage2.jpg'
-import ProductCard from '@/components/ProductCard.vue'
+import ProductScroll from '@/components/ProductScroll.vue'
 
 export default defineComponent({
   name: 'HomeView',
@@ -19,7 +19,7 @@ export default defineComponent({
     NavigationBar,
     ArrowLongRightIcon,
     Carousel,
-    ProductCard,
+    ProductScroll,
   },
 
  setup() {
@@ -33,7 +33,20 @@ export default defineComponent({
       { name: "Gift Sets", image: Handicraft },
     ];
 
-    return { myCategories };
+    const productList = [
+       { img: categories, category: "Handicrafts & Arts", title: "Product 1", price: 12 },
+       { img: food, category: "Foods & Snacks", title: "Product 2", price: 12 },
+       { img: categories, category: "Clothing & Accessories", title: "Product 3", price: 12 },
+       { img: categories, category: "Beauty & Herbal Products", title: "Product 4", price: 12 },
+       { img: categories, category: "Home & Decor", title: "Product 5", price: 12 },
+       { img: categories, category: "Drinks & Decor", title: "Product 6", price: 12 },
+       { img: categories, category: "Gift Sets", title: "Product 7", price: 12 },
+       { img: categories, category: "Handicrafts & Arts", title: "Product 8", price: 12 },
+       { img: categories, category: "Foods & Snacks", title: "Product 9", price: 12 },
+       { img: categories, category: "Home & Decor", title: "Product 10", price: 12 },
+    ];
+
+    return { myCategories, productList };
   },
 })
 </script>
@@ -140,14 +153,12 @@ export default defineComponent({
     <div class="text-5xl font-['Condiment'] font-extrabold flex justify-center items-center py-6">
       fresh find just in
     </div>
-    <div class="flex flex-wrap w-full p-10 gap-6 justify-center">
+    <!-- <div class="flex flex-wrap w-full p-10 gap-6 justify-center"> -->
+    <div class="w-full px-[7vw]">
+      <ProductScroll :products="productList"/>
+    </div>
+    <div class="w-full h-screen">
 
-      <ProductCard/>
-      <ProductCard/>
-      <ProductCard/>
-      <ProductCard/>
-      <ProductCard/>
-      <ProductCard/>
     </div>
   </div>
 </template>
