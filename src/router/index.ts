@@ -4,7 +4,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',               // default route
+      path: '/product_detail',               // default route
       name: 'ProductDetail',   // route name
       component: () => import('../views/ProductDetail.vue')
     },
@@ -19,9 +19,9 @@ const router = createRouter({
       path: '/shop',
       name: 'shop',
       component: () => import('../views/ShopView.vue'),
-    },  
-  ],
-      path: '/home',
+    },
+    {
+      path: '/',
       name: 'home',
       component: () => import('../views/HomeView.vue')
     }
