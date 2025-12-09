@@ -8,6 +8,9 @@ import NavigationBar from './components/NavigationBar.vue';
   <NavigationBar />
 
   <RouterView />
+  <!-- <div id="app">
+    <router-view />
+  </div> -->
 </template>
 
 <style>

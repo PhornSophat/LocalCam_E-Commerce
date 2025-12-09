@@ -133,13 +133,34 @@ const decrementQuantity = () => {
     quantity.value--
   }
 }
+import { onMounted, onBeforeUnmount } from 'vue';
+
+const isMenuOpen = ref(false);
+const isScrolled = ref(false);
+
+// Check scroll position
+const handleScroll = () => {
+  isScrolled.value = window.scrollY > 100;
+};
+
+onMounted(() => {
+  handleScroll();
+  window.addEventListener('scroll', handleScroll);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
+
 </script>
 
 <template>
-  <div class="min-h-screen bg-white">
+  <div 
+    :class="{'bg-white': isScrolled }"
+    class="min-h-screen relative bg-gray-300">
     <!-- Main Content -->
     <div class="p-4 md:p-8">
-      <div class="max-w-6xl mx-auto">
+      <div class="max-w-6xl mx-auto pt-20">
       <!-- Product Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <!-- Left Column: Images -->
@@ -397,9 +418,7 @@ const decrementQuantity = () => {
           </div>
         </div>
       </div>
-
       </div>
     </div>
   </div>
 </template>
-
