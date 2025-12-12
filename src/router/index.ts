@@ -50,7 +50,7 @@ const router = createRouter({
     {
       path: '/contact-us',
       name: 'ContactUs',
-      component: () => import('../views/ContactUsView.vue'),
+      component: () => import('../views/ContactUsView.vue')
     },
 <<<<<<< HEAD
 
@@ -63,6 +63,11 @@ const router = createRouter({
       path: '/shop',
       name: 'shop',
       component: () => import('../views/ShopView.vue')
+    },
+    {
+      path: '/Login',
+      name: 'Login',
+      component: () => import('../views/LoginView.vue')
     },
     {
       path: '/',

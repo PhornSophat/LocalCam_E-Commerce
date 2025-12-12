@@ -2,7 +2,7 @@
   <div class="w-full relative">
 
     <!-- Scroll container -->
-    <div 
+    <div
       ref="scrollContainer"
       class="flex gap-6 overflow-x-auto scroll-smooth no-scrollbar py-4"
       @scroll="handleScroll"
@@ -19,20 +19,20 @@
     </div>
     <div class="flex items-center gap-x-4">
       <!-- Left Arrow -->
-      <button 
+      <button
         @click="scrollLeft"
         class="bg-[#F1EEE5] p-3 shadow rounded-2xl text-4xl"
       >←</button>
 
       <!-- Right Arrow -->
-      <button 
+      <button
         @click="scrollRight"
         class="bg-[#F1EEE5] p-3 shadow rounded-2xl text-4xl"
       >→</button>
 
       <!-- Progress Line -->
       <div class="mt-4 w-lg h-[4px] bg-gray-300 rounded">
-        <div 
+        <div
           class="h-full bg-black rounded transition-all duration-300"
           :style="{ width: progress + '%' }"
         ></div>
@@ -42,7 +42,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { ref } from "vue";
 import ProductCart from "./ProductCart.vue";
 
