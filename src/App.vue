@@ -5,7 +5,7 @@ import NavigationBar from './components/NavigationBar.vue';
 </script>
 
 <template>
-  <NavigationBar />
+  <!-- <NavigationBar /> -->
 
   <RouterView />
   <!-- <div id="app">
