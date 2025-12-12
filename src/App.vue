@@ -2,15 +2,30 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import NavigationBar from './components/NavigationBar.vue';
+import Footer from './components/Footer.vue';
+
 </script>
 
 <template>
-  <!-- <NavigationBar /> -->
+  <!-- <header>
+    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+
+    <div class="wrapper">
+      <HelloWorld msg="You did it!" />
+
+      <nav>
+        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/about">About</RouterLink>
+      </nav>
+    </div>
+  </header> -->
+
+
+  <NavigationBar />
 
   <RouterView />
-  <!-- <div id="app">
-    <router-view />
-  </div> -->
+  
+  <Footer />
 </template>
 
 <style>
