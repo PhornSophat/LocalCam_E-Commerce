@@ -21,13 +21,13 @@
       <!-- Left Arrow -->
       <button 
         @click="scrollLeft"
-        class="bg-white p-3 shadow rounded-2xl text-4xl"
+        class="bg-[#F1EEE5] p-3 shadow rounded-2xl text-4xl"
       >←</button>
 
       <!-- Right Arrow -->
       <button 
         @click="scrollRight"
-        class=" bg-white p-3 shadow rounded-2xl text-4xl"
+        class="bg-[#F1EEE5] p-3 shadow rounded-2xl text-4xl"
       >→</button>
 
       <!-- Progress Line -->
