@@ -16,7 +16,6 @@ export default createRouter({
     {
       path: '/shop',
       name: 'ShopPageView',
-<<<<<<< HEAD
       component: () => import('../views/ShopPageview.vue'),
       children: [
         {
@@ -35,7 +34,6 @@ export default createRouter({
       //  component: () => import('../views/nestviews/IntrumentsComponent.vue'),
       //   },
       ],
-=======
       component: () => import('../views/ShopView.vue'),
       // children: [
       //   {
@@ -69,7 +67,6 @@ export default createRouter({
       //       import('../views/nestviews/BeautyHomeComponent.vue'),
       //   },
       // ],
->>>>>>> origin/main
     },
 
     // Product detail page (kept from merged version)
@@ -92,9 +89,19 @@ export default createRouter({
       component: () => import('../views/AboutView.vue'),
     },
     {
-      path: '/Login',
+      path: '/login',
       name: 'Login',
       component: () => import('../views/LoginView.vue')
+    },
+    {
+      path: '/signup',
+      name: 'Signup',
+      component: () => import('../views/SignupView.vue')
+    },
+    {
+      path: '/forgot-password',
+      name: 'ForgotPass',
+      component: () => import('../views/ForgotPassView.vue')
     },
     {
       path: '/',
