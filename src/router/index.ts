@@ -4,7 +4,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/product_detail',               // default route
+      path: '/product_detail',
       name: 'ProductDetail',
       component: () => import('../views/ProductDetail.vue')
     },
@@ -19,14 +19,19 @@ const router = createRouter({
       component: () => import('../views/ShopView.vue')
     },
     {
-      path: '/Login',
+      path: '/login',
       name: 'Login',
       component: () => import('../views/LoginView.vue')
     },
-        {
-      path: '/Signup',
+    {
+      path: '/signup',
       name: 'Signup',
       component: () => import('../views/SignupView.vue')
+    },
+    {
+      path: '/forgot-password',
+      name: 'ForgotPass',
+      component: () => import('../views/ForgotPassView.vue')
     },
     {
       path: '/',
