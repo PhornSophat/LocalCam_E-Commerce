@@ -42,7 +42,7 @@
       class="h-4 rounded-full cursor-pointer transition-all duration-300 ease-in-out"
       :class="{
           // Active (Wider and Black)
-          'bg-black w-12': currentIndex === index, 
+          'bg-black w-12': currentIndex === index,
           // Inactive (Smaller and Dark Gray)
           'bg-white w-4 hover:bg-gray-200': currentIndex !== index,
       }"
@@ -53,7 +53,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { ref, onMounted, onUnmounted, defineComponent } from "vue";
 // Enforcing the full, correct path to resolve the truncation issue reported in the error log.
 import home1 from "../assets/home3.jpg";
@@ -95,29 +95,29 @@ const pauseSlide = () => {
 
 const goToSlide = (index) => {
   // Manual navigation resets the timer to give the user control
-  pauseSlide(); 
+  pauseSlide();
   currentIndex.value = index;
-  startSlide(); 
+  startSlide();
 };
 
 // Pause auto-play immediately when the user interacts, then restart after a short delay
 const restartTimerOnInteraction = () => {
   pauseSlide();
   // Restart the timer after 3 seconds of inactivity
-  window.setTimeout(startSlide, 3000); 
+  window.setTimeout(startSlide, 3000);
 };
 
 // Lifecycle Hooks for cleanup
 onMounted(startSlide);
 onUnmounted(pauseSlide);
 
-return { 
-  images, 
-  currentIndex, 
-  nextSlide, 
-  prevSlide, 
+return {
+  images,
+  currentIndex,
+  nextSlide,
+  prevSlide,
   goToSlide,
-  restartTimerOnInteraction, 
+  restartTimerOnInteraction,
 };
 },
 });

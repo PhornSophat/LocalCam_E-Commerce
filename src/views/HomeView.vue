@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue'
 // 1. Import the component
 import Slider from '../components/Slider.vue'
