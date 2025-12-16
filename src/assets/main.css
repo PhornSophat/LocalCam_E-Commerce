@@ -1,7 +1,14 @@
+<<<<<<< HEAD
+@import "tailwindcss";
+=======
+>>>>>>> origin/main
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+<<<<<<< HEAD
+=======
 @import "tailwindcss";
 @import "tailwindcss/preflight";
 @import "tailwindcss/utilities";
+>>>>>>> origin/main

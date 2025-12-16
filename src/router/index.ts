@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+// import { routes } from 'vue-router/auto-routes'
 
-const router = createRouter({
+export default createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     // Home Page
@@ -15,6 +16,26 @@ const router = createRouter({
     {
       path: '/shop',
       name: 'ShopPageView',
+<<<<<<< HEAD
+      component: () => import('../views/ShopPageview.vue'),
+      children: [
+        {
+       path: '',
+       name: 'instruments',
+       component: () => import('../views/nestviews/AllProductsComponent.vue'),
+    } ,
+      //   {
+      //  path: '/foods-snacks',
+      //  name: 'foods-snacks',
+      //  component: () => import('../views/nestviews/FoodSnacksComponents.vue'),
+      //   },
+      //   {
+      //  path: '/instruments',
+      //  name: 'instruments',
+      //  component: () => import('../views/nestviews/IntrumentsComponent.vue'),
+      //   },
+      ],
+=======
       component: () => import('../views/ShopView.vue'),
       // children: [
       //   {
@@ -48,6 +69,7 @@ const router = createRouter({
       //       import('../views/nestviews/BeautyHomeComponent.vue'),
       //   },
       // ],
+>>>>>>> origin/main
     },
 
     // Product detail page (kept from merged version)
@@ -82,4 +104,4 @@ const router = createRouter({
   ],
 })
 
-export default router
+
