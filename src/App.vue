@@ -1,13 +1,15 @@
 
 <script setup lang="ts">
   import { RouterView } from 'vue-router'
-// import { RouterLink, RouterView } from 'vue-router'
-// import ShopPageView from './views/ShopPageview.vue';
+  import NavigationBar from './components/NavigationBar.vue';
+  import Footer from './components/Footer.vue';
 
 </script>
 
 <template>
+  <NavigationBar />
   <RouterView />
+  <Footer />
 </template>
 
 <style>
