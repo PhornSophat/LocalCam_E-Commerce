@@ -14,6 +14,8 @@ import categories from '@/assets/categoryGiftSet2.png'
 import Handicraft from '@/assets/categoryGiftSet.png'
 import Toy from '@/assets/homePage.jpg'
 import food from '@/assets/homePage2.jpg'
+import palm_sugar_cam from '@/assets/Palm-Sugar-cambodia.webp'
+import krama from '@/assets/1. Krama.jpg'
 
 export default defineComponent({
   name: 'HomeView',
@@ -82,34 +84,33 @@ export default defineComponent({
 
     const myCategories = [
       { name: 'Handicraft & Arts', image: categories },
-      { name: 'Foods & Snacks', image: food },
+      { name: 'Foods & Snacks', image: food ,route: "/shop/foods-snacks", },
       { name: 'Clothing & Accessories', image: Toy },
-      { name: 'Beauty & Herbal Products', image: Handicraft },
+      { name: 'Beauty & Herbal Products', image: Handicraft, route: "/shop/beauty-home" },
       { name: 'Home & Decor', image: Handicraft },
       { name: 'Drinks & Coffee', image: Handicraft },
       { name: 'Gift Sets', image: Handicraft },
     ]
 
-    const productList = [
-      { img: categories, category: 'Handicrafts & Arts', title: 'Product 1', price: 12 },
-      { img: food, category: 'Foods & Snacks', title: 'Product 2', price: 12 },
-      { img: categories, category: 'Clothing & Accessories', title: 'Product 3', price: 12 },
-      { img: categories, category: 'Beauty & Herbal Products', title: 'Product 4', price: 12 },
-      { img: categories, category: 'Home & Decor', title: 'Product 5', price: 12 },
-      { img: categories, category: 'Drinks & Decor', title: 'Product 6', price: 12 },
-      { img: categories, category: 'Gift Sets', title: 'Product 7', price: 12 },
-      { img: categories, category: 'Handicrafts & Arts', title: 'Product 8', price: 12 },
-      { img: categories, category: 'Foods & Snacks', title: 'Product 9', price: 12 },
-      { img: categories, category: 'Home & Decor', title: 'Product 10', price: 12 },
+      const productList = [
+        { img: krama, category: 'Handicrafts & Arts', title: 'Krama( khmer scraft )', price: 3, slug: 'krama' },
+        { img: food, category: 'Foods & Snacks', title: 'Product 2', price: 12, slug: 'food-snack-2' },
+        { img: palm_sugar_cam, category: 'Foods & Snacks', title: 'Palm Sugar', price: 12, slug: 'palm-sugar-cambodia' },
+        { img: categories, category: 'Beauty & Herbal Products', title: 'Product 4', price: 12, slug: 'beauty-herbal-4' },
+        { img: categories, category: 'Home & Decor', title: 'Product 5', price: 12, slug: 'home-decor-5' },
+        { img: categories, category: 'Drinks & Decor', title: 'Product 6', price: 12, slug: 'drink-decor-6' },
+        { img: categories, category: 'Gift Sets', title: 'Product 7', price: 12, slug: 'gift-set-7' },
+        { img: categories, category: 'Handicrafts & Arts', title: 'Product 8', price: 12, slug: 'handicraft-art-8' },
+        { img: food, category: 'Foods & Snacks', title: 'Product 9', price: 12, slug: 'food-snack-9' },
+        { img: categories, category: 'Home & Decor', title: 'Product 10', price: 12, slug: 'home-decor-10' },
     ]
-
     return { myCategories, productList, Principle, testimonialData }
   },
 })
 </script>
 
 <template>
-  <!-- <div class="h-screen w-full absolute top-0 inset-0 z-0"> -->
+  <!-- <div class="absolute inset-0 top-0 z-0 w-full h-screen"> -->
   <Slider />
   <!-- TEXT OVERLAY (Title - z-20) -->
   <p
@@ -133,7 +134,7 @@ export default defineComponent({
 
       <ArrowLongRightIcon
         alt="Go to exploration our products"
-        class="ml-3 w-6 h-6 text-black transition-transform duration-300 group-hover:translate-x-2 group-hover:text-white"
+        class="w-6 h-6 ml-3 text-black transition-transform duration-300 group-hover:translate-x-2 group-hover:text-white"
       />
     </button>
   </router-link>
@@ -154,7 +155,7 @@ export default defineComponent({
       <img
         src="../assets/aboutImage.png"
         alt="Cat Image"
-        class="w-full h-auto pt-18 object-cover rounded-2xl"
+        class="object-cover w-full h-auto pt-18 rounded-2xl"
       />
     </div>
     <div class="flex flex-col w-1/2 max-md:w-full max-md:items-center">
@@ -184,7 +185,7 @@ export default defineComponent({
             ABOUT US
             <ArrowLongRightIcon
               alt="Go to exploration our products"
-              class="ml-3 w-6 h-6 text-black transition-transform duration-300 group-hover:translate-x-2 group-hover:text-white"
+              class="w-6 h-6 ml-3 text-black transition-transform duration-300 group-hover:translate-x-2 group-hover:text-white"
             />
           </button>
         </router-link>
@@ -212,7 +213,7 @@ export default defineComponent({
     >
       Fresh Find Just In
     </div>
-    <!-- <div class="flex flex-wrap w-full p-10 gap-6 justify-center"> -->
+    <!-- <div class="flex flex-wrap justify-center w-full gap-6 p-10"> -->
     <div class="w-full px-[7vw]">
       <ProductScroll :products="productList" />
     </div>
@@ -241,8 +242,8 @@ export default defineComponent({
           authentic, natural aesthetic to any home.
         </p>
       </div>
-      <div class="flex flex-col w-1/2 max-lg:w-full px-6 justify-center pt-4">
-        <ul class="list-disc font-semibold">
+      <div class="flex flex-col justify-center w-1/2 px-6 pt-4 max-lg:w-full">
+        <ul class="font-semibold list-disc">
           <li>Abundance of Handwoven Goods</li>
           <li>Cultural Market Setting</li>
           <li>Colorful Lanterns</li>
@@ -254,7 +255,7 @@ export default defineComponent({
             SHOP NOW
             <ArrowLongRightIcon
               alt="Go to exploration our products"
-              class="ml-3 w-6 h-6 text-white transition-transform duration-300 group-hover:translate-x-2 group-hover:text-black"
+              class="w-6 h-6 ml-3 text-white transition-transform duration-300 group-hover:translate-x-2 group-hover:text-black"
             />
           </button>
         </router-link>
@@ -282,7 +283,7 @@ export default defineComponent({
 
   <!-- testimonials -->
   <div class="w-full h-auto pb-20 px-[7vw]">
-    <div class="flex justify-between h-auto w-full pt-14 text-gray-500">
+    <div class="flex justify-between w-full h-auto text-gray-500 pt-14">
       <div>///006</div>
       <div>/testimonials</div>
     </div>
@@ -293,7 +294,7 @@ export default defineComponent({
         What our customers say
       </div>
     </div>
-    <div class="w-full flex justify-center">
+    <div class="flex justify-center w-full">
       <TestimonialCard :testimonials="testimonialData" />
     </div>
   </div>
@@ -309,7 +310,7 @@ export default defineComponent({
     >
       Trust by Hundreds
     </div>
-    <div class="w-full flex">
+    <div class="flex w-full">
       <div
         class="w-1/4 flex justify-center items-center gap-4 border-r-2 border-[#D5D5D2] max-lg:flex-col"
       >
@@ -334,7 +335,7 @@ export default defineComponent({
           confirel
         </div>
       </div>
-      <div class="w-1/4 flex justify-center items-center gap-4 max-lg:flex-col">
+      <div class="flex items-center justify-center w-1/4 gap-4 max-lg:flex-col">
         <img src="../assets/partner1 1.png" alt="confirel" class="w-[6vw]" />
         <div class="text-3xl max-lg:text-xl text-[#616161] font-['Poppins'] font-bold">
           confirel
@@ -368,7 +369,7 @@ export default defineComponent({
             START SHOPPING NOW
             <ArrowLongRightIcon
               alt="Go to exploration our products"
-              class="ml-3 w-6 h-6 text-white transition-transform duration-300 group-hover:translate-x-2 group-hover:text-black"
+              class="w-6 h-6 ml-3 text-white transition-transform duration-300 group-hover:translate-x-2 group-hover:text-black"
             />
           </button>
         </router-link>
