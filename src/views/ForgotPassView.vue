@@ -16,7 +16,7 @@
         <div class="flex-1 flex items-center justify-center px-5 py-10">
             <div class="w-full max-w-5xl bg-white rounded-xl shadow-lg overflow-hidden grid md:grid-cols-2">
                 <!-- Visual Section -->
-                <div class="hidden md:flex bg-linear-to-br from-gray-800 to-gray-600 p-10 lg:p-16 flex-col justify-center items-center text-white relative overflow-hidden">
+                <div class="hidden md:flex bg-[url('/home/soksim/Documents/Year4_Project/LocalCam_E-Commerce/src/assets/giants-in-front-gate-of-angkor-thom-in-angkor-wat-siem-reap-in-cambodia.webp')] bg-cover bg-center bg-no-repeat p-10 lg:p-16 flex-col justify-center items-center text-white relative overflow-hidden">
                     <div class="absolute inset-0 opacity-10">
                         <div class="absolute top-1/2 left-1/5 w-96 h-96 bg-[#F1EEE5] rounded-full blur-3xl"></div>
                         <div class="absolute bottom-1/5 right-1/5 w-80 h-80 bg-[#F1EEE5] rounded-full blur-3xl"></div>

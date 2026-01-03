@@ -87,7 +87,7 @@ export default {
     <main class="flex-1 flex items-center justify-center px-5 py-10">
       <div class="grid md:grid-cols-2 max-w-5xl w-full bg-white rounded-xl shadow-lg overflow-hidden">
         <!-- Visual Side -->
-        <div class="hidden md:flex bg-linear-to-br from-gray-600 to-gray-800 p-16 flex-col justify-center items-center text-white relative overflow-hidden">
+        <div class="hidden md:flex bg-[url('/home/soksim/Documents/Year4_Project/LocalCam_E-Commerce/src/assets/face-tower-bayon-870x580.webp')] bg-cover bg-center bg-no-repeat  p-16 flex-col justify-center items-center text-white relative overflow-hidden">
           <div class="absolute inset-0 opacity-10">
             <div class="absolute top-2/5 left-3/10 w-96 h-96 bg-[#F1EEE5] rounded-full blur-3xl"></div>
             <div class="absolute bottom-3/10 right-3/10 w-96 h-96 bg-[#F1EEE5] rounded-full blur-3xl"></div>
