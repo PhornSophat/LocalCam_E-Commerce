@@ -100,7 +100,7 @@ export default {
                 >
                 <label for="remember" class="text-sm text-gray-700 cursor-pointer">Remember me</label>
               </div>
-              <a href="#" class="text-sm text-gray-800 font-medium hover:opacity-70 transition-opacity">Forgot Password?</a>
+              <a href="#" @click.prevent="$router.push('/forgot-password')" class="text-sm text-gray-800 font-medium hover:opacity-70 transition-opacity">Forgot Password?</a>
             </div>
 
             <button
@@ -142,23 +142,11 @@ export default {
           </div>
 
           <div class="text-center text-sm text-gray-600">
-            Don't have an account? <a href="#" class="text-gray-800 font-semibold hover:opacity-70 transition-opacity">Sign Up</a>
+            Don't have an account? <a href="#" @click.prevent="$router.push('/signup')" class="text-gray-800 font-semibold hover:opacity-70 transition-opacity">Sign Up</a>
           </div>
         </div>
       </div>
     </main>
-
-    <!-- Footer -->
-    <footer class="bg-[#767064] text-white py-8">
-      <div class="max-w-7xl mx-auto px-5 flex flex-col md:flex-row justify-between items-center gap-5">
-        <div class="text-white/60 text-xs">© 2024 Decorist. All rights reserved.</div>
-        <ul class="flex gap-6 list-none flex-wrap justify-center">
-          <li><a href="#" class="text-white/80 text-sm hover:text-white transition-colors">Privacy Policy</a></li>
-          <li><a href="#" class="text-white/80 text-sm hover:text-white transition-colors">Terms of Service</a></li>
-          <li><a href="#" class="text-white/80 text-sm hover:text-white transition-colors">Contact Us</a></li>
-        </ul>
-      </div>
-    </footer>
   </div>
 </template>
 

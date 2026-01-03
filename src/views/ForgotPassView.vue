@@ -29,7 +29,7 @@
                         </h2>
                         <p class="text-base leading-relaxed opacity-90">
                             No worries! We'll send you a recovery link to your Gmail account
-                            so you can reset your password and get back to decorating your space.
+                            so you can reset your password and get back to shopping with peace of mind.
                         </p>
                     </div>
                 </div>
@@ -78,7 +78,7 @@
 
                         <div class="text-center text-sm text-gray-600 flex items-center justify-center gap-1">
                             <span>←</span>
-                            <span>Back to <a href="#" class="text-gray-800 font-semibold hover:opacity-70 transition-opacity">Sign In</a></span>
+                            <span>Back to <a href="#" @click.prevent="$router.push('/login')" class="text-gray-800 font-semibold hover:opacity-70 transition-opacity">Sign In</a></span>
                         </div>
                     </div>
 
@@ -104,32 +104,17 @@
 
                         <div class="text-center text-sm text-gray-600 flex items-center justify-center gap-1">
                             <span>←</span>
-                            <span>Back to <a href="#" class="text-gray-800 font-semibold hover:opacity-70 transition-opacity">Sign In</a></span>
+                            <span>Back to <a href="#" @click.prevent="$router.push('/login')" class="text-gray-800 font-semibold hover:opacity-70 transition-opacity">Sign In</a></span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Footer -->
-        <footer class="bg-[#767064] text-white py-8">
-            <div class="max-w-7xl mx-auto px-5">
-                <div class="flex flex-col sm:flex-row justify-between items-center gap-5">
-                    <div class="text-white/60 text-xs">
-                        © 2024 Decorist. All rights reserved.
-                    </div>
-                    <ul class="flex flex-wrap gap-6 list-none justify-center">
-                        <li><a href="#" class="text-white/80 text-sm hover:text-white transition-colors">Privacy Policy</a></li>
-                        <li><a href="#" class="text-white/80 text-sm hover:text-white transition-colors">Terms of Service</a></li>
-                        <li><a href="#" class="text-white/80 text-sm hover:text-white transition-colors">Contact Us</a></li>
-                    </ul>
-                </div>
-            </div>
-        </footer>
     </div>
 </template>
 
 <script lang="ts">
+
 export default {
     data() {
         return {
