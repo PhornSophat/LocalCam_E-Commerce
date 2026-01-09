@@ -1,4 +1,6 @@
 <script lang="ts">
+import { supabase } from '../supabase'
+
 export default {
   data() {
     return {
@@ -8,20 +10,25 @@ export default {
       phone: '',
       password: '',
       confirmPassword: '',
+      // New toggle states
+      showPassword: false,
+      showConfirmPassword: false,
       termsAccepted: false,
       newsletter: false,
       passwordStrength: 0,
       strengthText: 'Use 8+ characters with a mix of letters, numbers & symbols',
-      strengthColor: '#ddd'
+      strengthColor: '#ddd',
+      loading: false,
+      errorMessage: '',
     }
   },
   watch: {
     password(newPassword) {
       this.calculatePasswordStrength(newPassword)
-    }
+    },
   },
   methods: {
-    calculatePasswordStrength(password) {
+    calculatePasswordStrength(password: string) {
       let strength = 0
       if (password.length >= 8) strength += 25
       if (password.length >= 12) strength += 25
@@ -42,259 +49,384 @@ export default {
         this.strengthColor = '#22c55e'
       }
     },
-    handleSubmit() {
+
+    async handleSubmit() {
       if (this.password !== this.confirmPassword) {
-        alert('Passwords do not match!')
+        this.errorMessage = 'Passwords do not match!'
         return
       }
-      if (!this.termsAccepted) {
-        alert('Please accept the terms and conditions')
-        return
+
+      this.loading = true
+      this.errorMessage = ''
+
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email: this.email,
+          password: this.password,
+          options: {
+            data: {
+              first_name: this.firstName,
+              last_name: this.lastName,
+              phone: this.phone,
+              newsletter: this.newsletter,
+              role: 'client',
+            },
+          },
+        })
+
+        if (error) throw error
+
+        if (data.user) {
+          alert('Account created! Please check your email for a confirmation link.')
+          this.$router.push('/login')
+        }
+      } catch (error: any) {
+        this.errorMessage = error.message
+      } finally {
+        this.loading = false
       }
-      console.log('Sign up:', {
-        firstName: this.firstName,
-        lastName: this.lastName,
-        email: this.email,
-        phone: this.phone,
-        newsletter: this.newsletter
-      })
     },
-    handleGoogleSignup() {
-      console.log('Google signup')
+
+    async handleGoogleSignup() {
+      const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' })
+      if (error) this.errorMessage = error.message
     },
-    handleFacebookSignup() {
-      console.log('Facebook signup')
-    }
-  }
+
+    async handleFacebookSignup() {
+      const { error } = await supabase.auth.signInWithOAuth({ provider: 'facebook' })
+      if (error) this.errorMessage = error.message
+    },
+  },
 }
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col bg-[#F1EEE5]">
-    <!-- Header -->
+  <div class="min-h-screen flex flex-col bg-[#F1EEE5] font-Poppins">
     <header class="bg-white shadow-sm">
-      <div class="max-w-7xl mx-auto px-5 py-5">
-        <div class="flex justify-center items-center">
-          <img src="../assets/black-weblogo.png" alt="logo" class="w-20" />
-          <div class="text-2xl font-semibold tracking-wide text-gray-800">
-            LocalCam
-          </div>
+      <div class="px-5 py-5 mx-auto max-w-7xl">
+        <div class="flex items-center justify-center gap-3">
+          <img src="../assets/black-weblogo.png" alt="logo" class="w-16" />
+          <div class="text-2xl font-black tracking-tight text-gray-800 uppercase">LocalCam</div>
         </div>
       </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="flex-1 flex items-center justify-center px-5 py-10">
-      <div class="grid md:grid-cols-2 max-w-5xl w-full bg-white rounded-xl shadow-lg overflow-hidden">
-        <!-- Visual Side -->
-        <div class="hidden md:flex bg-linear-to-br from-gray-600 to-gray-800 p-16 flex-col justify-center items-center text-white relative overflow-hidden">
+    <main class="flex items-center justify-center flex-1 px-5 py-10">
+      <div
+        class="grid w-full max-w-6xl overflow-hidden bg-white shadow-2xl md:grid-cols-2 rounded-2xl"
+      >
+        <div
+          class="relative flex-col items-center justify-center hidden p-16 overflow-hidden text-white md:flex bg-gradient-to-br from-gray-700 to-gray-900"
+        >
           <div class="absolute inset-0 opacity-10">
-            <div class="absolute top-2/5 left-3/10 w-96 h-96 bg-[#F1EEE5] rounded-full blur-3xl"></div>
-            <div class="absolute bottom-3/10 right-3/10 w-96 h-96 bg-[#F1EEE5] rounded-full blur-3xl"></div>
+            <div class="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-[100px]"></div>
           </div>
-          <div class="relative z-10 text-center flex flex-col items-center">
-            <div class="w-40 mb-8"><img src="../assets/whitelogoWeb.png" alt="logo"></div>
-            <h2 class="text-3xl font-semibold mb-4">Join Our LocalCam</h2>
-            <p class="text-base leading-relaxed opacity-90 mb-6">
-              Create your account and start transforming your space with our curated collection of modern home decor.
+
+          <div class="relative z-10 flex flex-col items-center text-center">
+            <img src="../assets/whitelogoWeb.png" alt="logo" class="w-32 mb-8" />
+            <h2 class="mb-6 text-3xl font-bold tracking-wide uppercase">Join LocalCam</h2>
+            <p class="max-w-xs mb-10 text-sm leading-relaxed opacity-80">
+              Create your account to start transforming your space with our curated collection of
+              artisan home decor.
             </p>
 
-            <div class="text-left mt-8">
-              <div class="flex items-center gap-3 mb-4 text-sm">
-                <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0">✓</div>
-                <span>Exclusive access to new collections</span>
+            <div class="w-full max-w-xs space-y-6">
+              <div
+                class="flex items-center gap-4 text-xs font-bold tracking-widest uppercase text-amber-100"
+              >
+                <span
+                  class="flex items-center justify-center w-8 h-8 text-white rounded-full bg-white/10"
+                  >01</span
+                >
+                <span>Exclusive Collection Access</span>
               </div>
-              <div class="flex items-center gap-3 mb-4 text-sm">
-                <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0">✓</div>
-                <span>Save favorites to your wishlist</span>
+              <div
+                class="flex items-center gap-4 text-xs font-bold tracking-widest uppercase text-amber-100"
+              >
+                <span
+                  class="flex items-center justify-center w-8 h-8 text-white rounded-full bg-white/10"
+                  >02</span
+                >
+                <span>Wishlist Management</span>
               </div>
-              <div class="flex items-center gap-3 mb-4 text-sm">
-                <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0">✓</div>
-                <span>Track orders and delivery</span>
-              </div>
-              <div class="flex items-center gap-3 text-sm">
-                <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center shrink-0">✓</div>
-                <span>Get personalized recommendations</span>
+              <div
+                class="flex items-center gap-4 text-xs font-bold tracking-widest uppercase text-amber-100"
+              >
+                <span
+                  class="flex items-center justify-center w-8 h-8 text-white rounded-full bg-white/10"
+                  >03</span
+                >
+                <span>Real-time Order Tracking</span>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Form Side -->
-        <div class="p-12 md:p-16 flex flex-col justify-center">
+        <div class="flex flex-col justify-center p-10 md:p-16">
           <div class="mb-8">
-            <h1 class="text-3xl font-semibold mb-2 text-gray-800">Create Account</h1>
-            <p class="text-sm text-gray-600">Join us and start your decor journey</p>
+            <h1 class="mb-2 text-3xl font-black text-gray-900">Create Account</h1>
+            <p class="text-sm font-medium text-gray-500">Start your decor journey today</p>
           </div>
 
-          <form @submit.prevent="handleSubmit">
-            <div class="grid md:grid-cols-2 gap-4">
-              <div class="mb-4">
-                <label for="firstname" class="block mb-2 text-sm text-gray-700 font-medium">First Name</label>
+          <div
+            v-if="errorMessage"
+            class="flex items-center gap-3 p-4 mb-6 text-xs font-bold text-red-600 border border-red-100 bg-red-50 rounded-xl"
+          >
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              />
+            </svg>
+            {{ errorMessage }}
+          </div>
+
+          <form @submit.prevent="handleSubmit" class="space-y-4">
+            <div class="grid gap-4 md:grid-cols-2">
+              <div>
+                <label class="block mb-1.5 text-[10px] font-black uppercase text-gray-400"
+                  >First Name</label
+                >
                 <input
-                  type="text"
-                  id="firstname"
                   v-model="firstName"
+                  type="text"
                   placeholder="John"
                   required
-                  class="w-full px-4 py-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-gray-800 transition-colors"
-                >
+                  class="w-full px-4 py-3 text-sm transition-all border border-gray-200 outline-none bg-gray-50 rounded-xl focus:ring-2 focus:ring-gray-800"
+                />
               </div>
-              <div class="mb-4">
-                <label for="lastname" class="block mb-2 text-sm text-gray-700 font-medium">Last Name</label>
+              <div>
+                <label class="block mb-1.5 text-[10px] font-black uppercase text-gray-400"
+                  >Last Name</label
+                >
                 <input
-                  type="text"
-                  id="lastname"
                   v-model="lastName"
+                  type="text"
                   placeholder="Doe"
                   required
-                  class="w-full px-4 py-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-gray-800 transition-colors"
-                >
+                  class="w-full px-4 py-3 text-sm transition-all border border-gray-200 outline-none bg-gray-50 rounded-xl focus:ring-2 focus:ring-gray-800"
+                />
               </div>
             </div>
 
-            <div class="mb-4">
-              <label for="email" class="block mb-2 text-sm text-gray-700 font-medium">Email Address</label>
+            <div>
+              <label class="block mb-1.5 text-[10px] font-black uppercase text-gray-400"
+                >Email Address</label
+              >
               <input
-                type="email"
-                id="email"
                 v-model="email"
-                placeholder="your@email.com"
+                type="email"
+                placeholder="john@example.com"
                 required
-                class="w-full px-4 py-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-gray-800 transition-colors"
-              >
+                class="w-full px-4 py-3 text-sm transition-all border border-gray-200 outline-none bg-gray-50 rounded-xl focus:ring-2 focus:ring-gray-800"
+              />
             </div>
 
-            <div class="mb-4">
-              <label for="phone" class="block mb-2 text-sm text-gray-700 font-medium">Phone Number (Optional)</label>
+            <div>
+              <label class="block mb-1.5 text-[10px] font-black uppercase text-gray-400"
+                >Phone (Optional)</label
+              >
               <input
-                type="tel"
-                id="phone"
                 v-model="phone"
-                placeholder="+1 (555) 123-4567"
-                class="w-full px-4 py-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-gray-800 transition-colors"
-              >
+                type="tel"
+                placeholder="+855 000 000"
+                class="w-full px-4 py-3 text-sm transition-all border border-gray-200 outline-none bg-gray-50 rounded-xl focus:ring-2 focus:ring-gray-800"
+              />
             </div>
 
-            <div class="mb-4">
-              <label for="password" class="block mb-2 text-sm text-gray-700 font-medium">Password</label>
-              <input
-                type="password"
-                id="password"
-                v-model="password"
-                placeholder="Create a strong password"
-                required
-                class="w-full px-4 py-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-gray-800 transition-colors"
+            <div class="relative">
+              <label class="block mb-1.5 text-[10px] font-black uppercase text-gray-400"
+                >Password</label
               >
+              <div class="relative">
+                <input
+                  v-model="password"
+                  :type="showPassword ? 'text' : 'password'"
+                  placeholder="Min. 8 characters"
+                  required
+                  class="w-full px-4 py-3 pr-12 text-sm transition-all border border-gray-200 outline-none bg-gray-50 rounded-xl focus:ring-2 focus:ring-gray-800"
+                />
+                <button
+                  type="button"
+                  @click="showPassword = !showPassword"
+                  class="absolute text-gray-400 -translate-y-1/2 right-4 top-1/2 hover:text-gray-800"
+                >
+                  <svg
+                    v-if="!showPassword"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                    />
+                  </svg>
+                  <svg
+                    v-else
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"
+                    />
+                  </svg>
+                </button>
+              </div>
               <div class="mt-2">
-                <div class="h-1 bg-gray-200 rounded-full overflow-hidden mb-1">
+                <div class="h-1 mb-1 overflow-hidden bg-gray-100 rounded-full">
                   <div
-                    class="h-full transition-all duration-300"
+                    class="h-full transition-all duration-500"
                     :style="{ width: passwordStrength + '%', backgroundColor: strengthColor }"
                   ></div>
                 </div>
-                <div class="text-xs" :style="{ color: strengthColor }">{{ strengthText }}</div>
+                <p class="text-[10px] font-bold" :style="{ color: strengthColor }">
+                  {{ strengthText }}
+                </p>
               </div>
             </div>
 
-            <div class="mb-4">
-              <label for="confirm-password" class="block mb-2 text-sm text-gray-700 font-medium">Confirm Password</label>
-              <input
-                type="password"
-                id="confirm-password"
-                v-model="confirmPassword"
-                placeholder="Re-enter your password"
-                required
-                class="w-full px-4 py-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-gray-800 transition-colors"
+            <div class="relative">
+              <label class="block mb-1.5 text-[10px] font-black uppercase text-gray-400"
+                >Confirm Password</label
               >
+              <div class="relative">
+                <input
+                  v-model="confirmPassword"
+                  :type="showConfirmPassword ? 'text' : 'password'"
+                  placeholder="Confirm your password"
+                  required
+                  class="w-full px-4 py-3 pr-12 text-sm transition-all border border-gray-200 outline-none bg-gray-50 rounded-xl focus:ring-2 focus:ring-gray-800"
+                />
+                <button
+                  type="button"
+                  @click="showConfirmPassword = !showConfirmPassword"
+                  class="absolute text-gray-400 -translate-y-1/2 right-4 top-1/2 hover:text-gray-800"
+                >
+                  <svg
+                    v-if="!showConfirmPassword"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                    />
+                  </svg>
+                  <svg
+                    v-else
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
 
-            <div class="flex items-start gap-2 mb-6">
-              <input
-                type="checkbox"
-                id="terms"
-                v-model="termsAccepted"
-                required
-                class="w-4 h-4 cursor-pointer mt-0.5 shrink-0"
-              >
-              <label for="terms" class="text-xs text-gray-700 leading-relaxed cursor-pointer">
-                I agree to the <a href="#" class="text-gray-800 underline font-medium">Terms of Service</a> and <a href="#" class="text-gray-800 underline font-medium">Privacy Policy</a>
+            <div class="pt-2 space-y-3">
+              <label class="flex items-start gap-3 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  v-model="termsAccepted"
+                  required
+                  class="w-4 h-4 rounded border-gray-300 text-gray-800 focus:ring-gray-800 mt-0.5"
+                />
+                <span class="text-[11px] text-gray-500 leading-snug"
+                  >I accept the
+                  <span class="font-bold text-gray-800 underline">Terms of Service</span> and
+                  <span class="font-bold text-gray-800 underline">Privacy Policy</span></span
+                >
               </label>
-            </div>
-
-            <div class="flex items-start gap-2 mb-6">
-              <input
-                type="checkbox"
-                id="newsletter"
-                v-model="newsletter"
-                class="w-4 h-4 cursor-pointer mt-0.5 shrink-0"
-              >
-              <label for="newsletter" class="text-xs text-gray-700 leading-relaxed cursor-pointer">
-                Send me exclusive offers, design inspiration, and decor tips
+              <label class="flex items-start gap-3 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  v-model="newsletter"
+                  class="w-4 h-4 rounded border-gray-300 text-gray-800 focus:ring-gray-800 mt-0.5"
+                />
+                <span
+                  class="text-[11px] text-gray-500 leading-snug font-medium group-hover:text-gray-800 transition-colors"
+                  >Join our artisan circle for interior design inspiration</span
+                >
               </label>
             </div>
 
             <button
               type="submit"
-              class="w-full py-3 bg-gray-800 text-white rounded-md cursor-pointer text-base font-semibold hover:bg-gray-600 transition-colors mb-5"
-              :disabled="!termsAccepted"
-              :class="{ 'opacity-50 cursor-not-allowed': !termsAccepted }"
+              :disabled="loading || !termsAccepted"
+              class="w-full py-4 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 active:scale-[0.98] transition-all shadow-xl shadow-gray-100 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2 mt-6"
             >
-              Create Account
+              <span
+                v-if="loading"
+                class="w-4 h-4 border-2 rounded-full animate-spin border-white/20 border-t-white"
+              ></span>
+              {{ loading ? 'Creating Account...' : 'Complete Sign Up' }}
             </button>
           </form>
 
-          <div class="flex items-center my-6 text-gray-400 text-sm">
-            <div class="flex-1 h-px bg-gray-300"></div>
-            <span class="px-4">or sign up with</span>
-            <div class="flex-1 h-px bg-gray-300"></div>
-          </div>
-
-          <div class="flex flex-col gap-3 mb-6">
-            <button
-              @click="handleGoogleSignup"
-              class="w-full py-3 border border-gray-300 bg-white rounded-md cursor-pointer text-sm font-medium flex items-center justify-center gap-2 hover:border-gray-800 hover:bg-gray-50 transition-all"
+          <div class="mt-8 text-xs font-medium text-center text-gray-500">
+            Member of LocalCam?
+            <router-link to="/login" class="ml-1 font-black text-gray-900 hover:underline"
+              >Sign In</router-link
             >
-              <svg width="18" height="18" viewBox="0 0 18 18">
-                <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/>
-                <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
-                <path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707 0-.59.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z"/>
-                <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/>
-              </svg>
-              Sign up with Google
-            </button>
-            <button
-              @click="handleFacebookSignup"
-              class="w-full py-3 border border-gray-300 bg-white rounded-md cursor-pointer text-sm font-medium flex items-center justify-center gap-2 hover:border-gray-800 hover:bg-gray-50 transition-all"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="#1877F2">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-              </svg>
-              Sign up with Facebook
-            </button>
-          </div>
-
-          <div class="text-center text-sm text-gray-600">
-            Already have an account? <a href="#" class="text-gray-800 font-semibold hover:opacity-70 transition-opacity">Sign In</a>
           </div>
         </div>
       </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-[#767064] text-white py-8">
-      <div class="max-w-7xl mx-auto px-5 flex flex-col md:flex-row justify-between items-center gap-5">
-        <div class="text-white/60 text-xs">© 2024 Decorist. All rights reserved.</div>
-        <ul class="flex gap-6 list-none flex-wrap justify-center">
-          <li><a href="#" class="text-white/80 text-sm hover:text-white transition-colors">Privacy Policy</a></li>
-          <li><a href="#" class="text-white/80 text-sm hover:text-white transition-colors">Terms of Service</a></li>
-          <li><a href="#" class="text-white/80 text-sm hover:text-white transition-colors">Contact Us</a></li>
-        </ul>
+    <footer class="bg-[#2D2A26] text-white/40 py-8">
+      <div
+        class="flex flex-col items-center justify-between gap-5 px-5 mx-auto max-w-7xl md:flex-row"
+      >
+        <div class="text-[10px] font-bold uppercase tracking-widest text-white/20">
+          © 2026 LocalCam Artisans
+        </div>
+        <div class="flex gap-8">
+          <a href="#" class="text-[10px] font-bold uppercase hover:text-white transition-colors"
+            >Privacy</a
+          >
+          <a href="#" class="text-[10px] font-bold uppercase hover:text-white transition-colors"
+            >Terms</a
+          >
+          <a href="#" class="text-[10px] font-bold uppercase hover:text-white transition-colors"
+            >Help</a
+          >
+        </div>
       </div>
     </footer>
   </div>
 </template>
-
-<style scoped>
-/* Additional custom styles if needed */
-</style>

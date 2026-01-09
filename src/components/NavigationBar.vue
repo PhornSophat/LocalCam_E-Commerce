@@ -6,7 +6,6 @@
     <div class="w-full px-[7vw] py-4">
       <div class="flex items-center justify-between h-16">
 
-        <!-- LOGO -->
         <div class="flex items-center shrink-0">
           <router-link
             to="/"
@@ -22,11 +21,9 @@
           </router-link>
         </div>
 
-        <!-- CENTER AREA (MENU / SEARCH) -->
         <div class="relative flex-1">
           <transition name="nav-fade" mode="out-in">
 
-            <!-- DESKTOP MENU -->
             <div
               v-if="!isSearchOpen"
               key="menu"
@@ -39,7 +36,6 @@
 
               <div class="h-6 mx-2 border-l border-gray-300"></div>
 
-              <!-- DESKTOP SEARCH ICON -->
               <button
                 @click="openSearch"
                 :class="iconClass"
@@ -52,17 +48,22 @@
                 </svg>
               </button>
 
-              <!-- CART -->
-              <button :class="iconClass" class="px-4 transition">
+              <router-link to="/cart" :class="iconClass" class="relative px-4 transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none"
                   viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.5 7h13L17 13M7 13l-4-8M17 13l1.5 7M5 21h14"/>
                 </svg>
-              </button>
+                <span 
+                  v-if="totalItems > 0" 
+                  class="absolute top-0 right-1 bg-red-600 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2"
+                  :class="isScrolled ? 'border-white' : 'border-[#806E53]'"
+                >
+                  {{ totalItems }}
+                </span>
+              </router-link>
             </div>
 
-            <!-- SEARCH AREA (DESKTOP + MOBILE) -->
             <div
               v-else
               key="search"
@@ -79,7 +80,6 @@
                          focus:ring-2 focus:ring-[#806E53] focus:outline-none transition"
                 />
 
-                <!-- CLOSE -->
                 <button
                   @click="closeSearch"
                   class="absolute right-8 top-1/2 -translate-y-1/2
@@ -88,7 +88,6 @@
                   ✕
                 </button>
 
-                <!-- SUGGESTIONS -->
                 <div
                   v-if="filteredSuggestions.length"
                   class="absolute z-50 w-full mt-3 bg-white border shadow-lg rounded-2xl"
@@ -109,10 +108,8 @@
           </transition>
         </div>
 
-        <!-- MOBILE ICONS -->
         <div class="flex items-center space-x-2 md:hidden">
 
-          <!-- MOBILE SEARCH -->
           <button
             @click="openSearch"
             :class="iconClass"
@@ -125,7 +122,6 @@
             </svg>
           </button>
 
-          <!-- BURGER -->
           <button
             @click="isMenuOpen = !isMenuOpen"
             :class="{ 'text-white': !isScrolled, 'text-gray-600': isScrolled }"
@@ -147,12 +143,12 @@
       </div>
     </div>
 
-    <!-- MOBILE MENU -->
     <div v-if="isMenuOpen && !isSearchOpen" class="bg-white shadow-inner md:hidden">
       <router-link to="/" class="block px-4 py-3">Home</router-link>
       <router-link to="/about" class="block px-4 py-3">About</router-link>
       <router-link to="/shop" class="block px-4 py-3">Shop</router-link>
       <router-link to="/contact-us" class="block px-4 py-3">Contact</router-link>
+      <router-link to="/cart" class="block px-4 py-3 font-bold text-amber-700">Cart ({{ totalItems }})</router-link>
     </div>
   </nav>
 </template>
@@ -161,6 +157,7 @@
 import { defineComponent, ref, computed, onMounted, onUnmounted } from 'vue';
 import logoScrolled from '../assets/black-weblogo.png';
 import whiteLogoWeb from '../assets/whitelogoWeb.png';
+import { cartState } from '../store'; // Import the store
 
 export default defineComponent({
   name: 'NavigationBar',
@@ -169,6 +166,11 @@ export default defineComponent({
     const isSearchOpen = ref(false);
     const isScrolled = ref(false);
     const searchQuery = ref('');
+
+    // Computed total items count for the badge
+    const totalItems = computed(() => {
+      return cartState.items.reduce((sum, item) => sum + item.qty, 0);
+    });
 
     const suggestions = [
       'Angkor Wat Tour',
@@ -239,6 +241,7 @@ export default defineComponent({
       iconClass,
       logoScrolled,
       whiteLogoWeb,
+      totalItems, // Return totalItems so template can use it
     };
   },
 });
