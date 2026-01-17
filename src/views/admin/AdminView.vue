@@ -19,13 +19,15 @@ const userOrders = ref<any[]>([])
 const showUserModal = ref(false)
 
 // Form States
-const isCreatingCategory = ref(false)
 const newCategoryName = ref('')
 const editingProduct = ref<number | null>(null)
+const showNewCategoryForm = ref(false)
 const productForm = ref({
   name: '',
   price: 0,
   image_url: '',
+  description: '',
+  slug: '',
   category_id: null as number | null,
   stock: 10,
 })
@@ -176,8 +178,9 @@ const handleQuickAddCategory = async () => {
 
     if (!error && data) {
       categories.value.push(data)
+      productForm.value.category_id = data.id
       newCategoryName.value = ''
-      isCreatingCategory.value = false
+      showNewCategoryForm.value = false
     }
   } catch (error) {
     console.error('Error adding category:', error)
@@ -199,9 +202,12 @@ const resetForm = () => {
     name: '',
     price: 0,
     image_url: '',
+    description: '',
+    slug: '',
     category_id: null,
     stock: 10,
   }
+  showNewCategoryForm.value = false
 }
 
 const editProduct = (item: any) => {
@@ -430,6 +436,11 @@ onMounted(() => {
               placeholder="Product Name"
               class="w-full bg-[#0F172A] border border-slate-700 rounded-2xl p-4 text-sm"
             />
+            <input
+              v-model="productForm.slug"
+              placeholder="Product Slug (optional)"
+              class="w-full bg-[#0F172A] border border-slate-700 rounded-2xl p-4 text-xs text-slate-400"
+            />
             <div class="grid grid-cols-2 gap-4">
               <input
                 v-model.number="productForm.price"
@@ -444,16 +455,84 @@ onMounted(() => {
                 class="bg-[#0F172A] border border-slate-700 rounded-2xl p-4 text-sm"
               />
             </div>
+            <textarea
+              v-model="productForm.description"
+              placeholder="Product Description"
+              class="w-full bg-[#0F172A] border border-slate-700 rounded-2xl p-4 text-sm resize-none h-24"
+            ></textarea>
             <input
               v-model="productForm.image_url"
               placeholder="Image URL"
               class="w-full bg-[#0F172A] border border-slate-700 rounded-2xl p-4 text-sm"
             />
+
+            <!-- Category Selection -->
+            <div class="space-y-2">
+              <label class="block text-xs font-bold tracking-wide uppercase text-slate-400"
+                >Select Category</label
+              >
+              <div class="flex gap-2">
+                <select
+                  v-model.number="productForm.category_id"
+                  class="flex-1 bg-[#0F172A] border border-slate-700 rounded-2xl p-4 text-sm"
+                >
+                  <option :value="null">-- Choose a category --</option>
+                  <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+                    {{ cat.name }}
+                  </option>
+                </select>
+                <button
+                  @click="showNewCategoryForm = !showNewCategoryForm"
+                  class="px-4 py-2 text-xs font-bold transition-all bg-slate-700 hover:bg-slate-600 rounded-2xl"
+                  title="Add new category"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <!-- New Category Form (Toggle) -->
+            <div
+              v-if="showNewCategoryForm"
+              class="p-4 bg-[#0F172A] rounded-2xl border border-slate-700 space-y-3"
+            >
+              <label class="block text-xs font-bold uppercase text-slate-400"
+                >Create New Category</label
+              >
+              <input
+                v-model="newCategoryName"
+                placeholder="Category Name"
+                class="w-full bg-[#1E293B] border border-slate-600 rounded-xl p-3 text-sm"
+              />
+              <div class="flex gap-2">
+                <button
+                  @click="handleQuickAddCategory"
+                  class="flex-1 px-4 py-2 text-xs font-bold text-white transition-all bg-emerald-600 hover:bg-emerald-500 rounded-xl"
+                >
+                  Create & Select
+                </button>
+                <button
+                  @click="showNewCategoryForm = false"
+                  class="flex-1 px-4 py-2 text-xs font-bold text-white transition-all bg-slate-700 hover:bg-slate-600 rounded-xl"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+
             <button
               @click="handleProductSubmit"
-              class="w-full py-4 font-black text-white transition-all bg-indigo-600 shadow-lg rounded-2xl active:scale-95"
+              :disabled="!productForm.category_id"
+              class="w-full py-4 font-black text-white transition-all bg-indigo-600 shadow-lg rounded-2xl active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {{ editingProduct ? 'Update' : 'Add' }} Product
+            </button>
+            <button
+              v-if="editingProduct"
+              @click="resetForm"
+              class="w-full py-2 font-bold transition-all text-slate-400 hover:text-white"
+            >
+              Cancel Edit
             </button>
           </div>
         </div>

@@ -2,6 +2,7 @@
 import { RouterView, useRoute } from 'vue-router'
 import NavigationBar from './components/NavigationBar.vue'
 import Footer from './components/Footer.vue'
+import ToastNotification from './components/ToastNotification.vue'
 
 const route = useRoute()
 </script>
@@ -10,6 +11,7 @@ const route = useRoute()
   <NavigationBar v-if="!route.meta.hideNav" />
   <RouterView />
   <Footer v-if="!route.meta.hideFooter" />
+  <ToastNotification />
 </template>
 
 <style>

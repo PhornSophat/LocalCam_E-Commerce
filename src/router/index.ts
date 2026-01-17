@@ -82,15 +82,46 @@ const router = createRouter({
       name: 'Cart',
       component: () => import('../views/CartView.vue'),
     },
+    {
+      path: '/checkout',
+      name: 'Checkout',
+      component: () => import('../views/CheckoutView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/profile',
+      name: 'Profile',
+      component: () => import('../views/UserProfileView.vue'),
+      meta: { requiresAuth: true, hideNav: false, hideFooter: false },
+    },
     /* =====================
      * admin routes (PROTECTED)
      * ===================== */
     {
       path: '/admin',
-      name: 'Admin',
-      component: () => import('../views/admin/AdminView.vue'),
-      // 2. Add metadata to protect this route
       meta: { requiresAdmin: true, hideNav: true, hideFooter: false },
+      children: [
+        {
+          path: '',
+          name: 'AdminDashboard',
+          component: () => import('../views/admin/AdminDashboard.vue'),
+        },
+        {
+          path: 'products',
+          name: 'AdminProducts',
+          component: () => import('../views/admin/AdminProducts.vue'),
+        },
+        {
+          path: 'orders',
+          name: 'AdminOrders',
+          component: () => import('../views/admin/AdminOrders.vue'),
+        },
+        {
+          path: 'users',
+          name: 'AdminUsers',
+          component: () => import('../views/admin/AdminUsers.vue'),
+        },
+      ],
     },
     {
       path: '/:pathMatch(.*)*',
@@ -109,7 +140,13 @@ router.beforeEach(async (to, from, next) => {
     data: { session },
   } = await supabase.auth.getSession()
 
-  if (to.meta.requiresAdmin) {
+  // Check if route requires authentication
+  if (to.meta.requiresAuth) {
+    if (!session) {
+      return next(`/login?redirect=${to.path}`)
+    }
+    next()
+  } else if (to.meta.requiresAdmin) {
     // If not logged in at all
     if (!session) {
       return next('/login')
@@ -129,7 +166,7 @@ router.beforeEach(async (to, from, next) => {
       next('/') // Kick back to home
     }
   } else {
-    // Not an admin route? Just let them go.
+    // Not a protected route? Just let them go.
     next()
   }
 })

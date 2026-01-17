@@ -14,7 +14,6 @@ export default {
       showPassword: false,
       showConfirmPassword: false,
       termsAccepted: false,
-      newsletter: false,
       passwordStrength: 0,
       strengthText: 'Use 8+ characters with a mix of letters, numbers & symbols',
       strengthColor: '#ddd',
@@ -68,7 +67,6 @@ export default {
               first_name: this.firstName,
               last_name: this.lastName,
               phone: this.phone,
-              newsletter: this.newsletter,
               role: 'client',
             },
           },
@@ -370,17 +368,6 @@ export default {
                   >I accept the
                   <span class="font-bold text-gray-800 underline">Terms of Service</span> and
                   <span class="font-bold text-gray-800 underline">Privacy Policy</span></span
-                >
-              </label>
-              <label class="flex items-start gap-3 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  v-model="newsletter"
-                  class="w-4 h-4 rounded border-gray-300 text-gray-800 focus:ring-gray-800 mt-0.5"
-                />
-                <span
-                  class="text-[11px] text-gray-500 leading-snug font-medium group-hover:text-gray-800 transition-colors"
-                  >Join our artisan circle for interior design inspiration</span
                 >
               </label>
             </div>
