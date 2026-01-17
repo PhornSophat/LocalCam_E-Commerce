@@ -83,26 +83,80 @@ export default defineComponent({
     ]
 
     const myCategories = [
-      { name: 'Handicraft & Arts', image: categories },
-      { name: 'Foods & Snacks', image: food ,route: "/shop/foods-snacks", },
-      { name: 'Clothing & Accessories', image: Toy },
-      { name: 'Beauty & Herbal Products', image: Handicraft, route: "/shop/beauty-home" },
-      { name: 'Home & Decor', image: Handicraft },
-      { name: 'Drinks & Coffee', image: Handicraft },
-      { name: 'Gift Sets', image: Handicraft },
+      { name: 'Handicraft & Arts', image: categories, route: '' },
+      { name: 'Foods & Snacks', image: food, route: '/shop/foods-snacks' },
+      { name: 'Clothing & Accessories', image: Toy, route: '' },
+      { name: 'Beauty & Herbal Products', image: Handicraft, route: '/shop/beauty-home' },
+      { name: 'Home & Decor', image: Handicraft, route: '' },
+      { name: 'Drinks & Coffee', image: Handicraft, route: '' },
+      { name: 'Gift Sets', image: Handicraft, route: '' },
     ]
 
-      const productList = [
-        { img: krama, category: 'Handicrafts & Arts', title: 'Krama( khmer scraft )', price: 3, slug: 'krama' },
-        { img: food, category: 'Foods & Snacks', title: 'Product 2', price: 12, slug: 'food-snack-2' },
-        { img: palm_sugar_cam, category: 'Foods & Snacks', title: 'Palm Sugar', price: 12, slug: 'palm-sugar-cambodia' },
-        { img: categories, category: 'Beauty & Herbal Products', title: 'Product 4', price: 12, slug: 'beauty-herbal-4' },
-        { img: categories, category: 'Home & Decor', title: 'Product 5', price: 12, slug: 'home-decor-5' },
-        { img: categories, category: 'Drinks & Decor', title: 'Product 6', price: 12, slug: 'drink-decor-6' },
-        { img: categories, category: 'Gift Sets', title: 'Product 7', price: 12, slug: 'gift-set-7' },
-        { img: categories, category: 'Handicrafts & Arts', title: 'Product 8', price: 12, slug: 'handicraft-art-8' },
-        { img: food, category: 'Foods & Snacks', title: 'Product 9', price: 12, slug: 'food-snack-9' },
-        { img: categories, category: 'Home & Decor', title: 'Product 10', price: 12, slug: 'home-decor-10' },
+    const productList = [
+      {
+        img: krama,
+        category: 'Handicrafts & Arts',
+        title: 'Krama( khmer scraft )',
+        price: 3,
+        slug: 'krama',
+      },
+      {
+        img: food,
+        category: 'Foods & Snacks',
+        title: 'Product 2',
+        price: 12,
+        slug: 'food-snack-2',
+      },
+      {
+        img: palm_sugar_cam,
+        category: 'Foods & Snacks',
+        title: 'Palm Sugar',
+        price: 12,
+        slug: 'palm-sugar-cambodia',
+      },
+      {
+        img: categories,
+        category: 'Beauty & Herbal Products',
+        title: 'Product 4',
+        price: 12,
+        slug: 'beauty-herbal-4',
+      },
+      {
+        img: categories,
+        category: 'Home & Decor',
+        title: 'Product 5',
+        price: 12,
+        slug: 'home-decor-5',
+      },
+      {
+        img: categories,
+        category: 'Drinks & Decor',
+        title: 'Product 6',
+        price: 12,
+        slug: 'drink-decor-6',
+      },
+      { img: categories, category: 'Gift Sets', title: 'Product 7', price: 12, slug: 'gift-set-7' },
+      {
+        img: categories,
+        category: 'Handicrafts & Arts',
+        title: 'Product 8',
+        price: 12,
+        slug: 'handicraft-art-8',
+      },
+      {
+        img: food,
+        category: 'Foods & Snacks',
+        title: 'Product 9',
+        price: 12,
+        slug: 'food-snack-9',
+      },
+      {
+        img: categories,
+        category: 'Home & Decor',
+        title: 'Product 10',
+        price: 12,
+        slug: 'home-decor-10',
+      },
     ]
     return { myCategories, productList, Principle, testimonialData }
   },
@@ -350,7 +404,6 @@ export default defineComponent({
     alt="Background Image"
     class="w-full h-[35vw] object-cover sticky top-0 z-0"
   />
-
 
   <div class="w-full bg-[#F1EEE5] pb-20 relative z-10">
     <div class="flex justify-between h-auto w-full pt-14 text-gray-500 px-[7vw]">

@@ -4,10 +4,11 @@
       v-for="product in deltaProducts"
       :key="product.id"
       class="relative cursor-pointer group"
+      @click="viewProductDetail(product)"
     >
       <div class="relative overflow-hidden transition-all duration-500 shadow-lg aspect-square bg-linear-to-br from-stone-100 to-stone-200 rounded-2xl hover:shadow-2xl">
         <img
-          :src="product.image"
+          :src="product.image_url || product.image"
           :alt="product.name"
           class="object-cover w-full h-full transition-transform duration-700 ease-out group-hover:scale-110"
         />
@@ -50,7 +51,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { supabase } from '../../supabase';
+
+const router = useRouter();
+const deltaProducts = ref<any[]>([]);
+
+const fetchProducts = async () => {
+  const { data } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+  deltaProducts.value = data || [];
+};
+
+const viewProductDetail = (product: any) => {
+  const slug = product.slug || product.name.toLowerCase().replace(/\s+/g, '-');
+  router.push(`/products/${slug}`);
+};
+
+onMounted(() => {
+  fetchProducts();
+});
+</script>
 
 const deltaProducts = ref([
   {
@@ -110,4 +131,4 @@ const deltaProducts = ref([
     tag: 'Kitchen'
   },
 ]);
-</script>
+<!-- </script> -->

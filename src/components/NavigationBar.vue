@@ -5,8 +5,6 @@
   >
     <div class="w-full px-[7vw] py-4">
       <div class="flex items-center justify-between h-16">
-
-        <!-- LOGO -->
         <div class="flex items-center shrink-0">
           <router-link
             to="/"
@@ -22,11 +20,8 @@
           </router-link>
         </div>
 
-        <!-- CENTER AREA (MENU / SEARCH) -->
         <div class="relative flex-1">
           <transition name="nav-fade" mode="out-in">
-
-            <!-- DESKTOP MENU -->
             <div
               v-if="!isSearchOpen"
               key="menu"
@@ -39,209 +34,300 @@
 
               <div class="h-6 mx-2 border-l border-gray-300"></div>
 
-              <!-- DESKTOP SEARCH ICON -->
-              <button
-                @click="openSearch"
+              <button @click="openSearch" :class="iconClass" class="px-4 transition">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-8 h-8"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z"
+                  />
+                </svg>
+              </button>
+
+              <router-link to="/cart" :class="iconClass" class="relative px-4 transition">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-8 h-8"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.5 7h13L17 13M7 13l-4-8M17 13l1.5 7M5 21h14"
+                  />
+                </svg>
+                <span
+                  v-if="totalItems > 0"
+                  class="absolute top-0 right-1 bg-red-600 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2"
+                  :class="isScrolled ? 'border-white' : 'border-[#806E53]'"
+                >
+                  {{ totalItems }}
+                </span>
+              </router-link>
+
+              <router-link
+                to="/profile"
                 :class="iconClass"
                 class="px-4 transition"
+                title="My Profile"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none"
-                  viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z"/>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-8 h-8"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
                 </svg>
-              </button>
-
-              <!-- CART -->
-              <button :class="iconClass" class="px-4 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none"
-                  viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.5 7h13L17 13M7 13l-4-8M17 13l1.5 7M5 21h14"/>
-                </svg>
-              </button>
+              </router-link>
             </div>
 
-            <!-- SEARCH AREA (DESKTOP + MOBILE) -->
-            <div
-              v-else
-              key="search"
-              class="flex justify-center w-full"
-            >
+            <div v-else key="search" class="flex justify-center w-full">
               <div class="relative w-full max-w-xl px-4 md:px-0">
-
                 <input
                   v-model="searchQuery"
+                  @input="searchProducts"
                   type="text"
-                  placeholder="Search products, locations..."
+                  placeholder="Search products..."
                   autofocus
-                  class="w-full px-6 py-3 rounded-full border border-gray-300
-                         focus:ring-2 focus:ring-[#806E53] focus:outline-none transition"
+                  class="w-full px-6 py-3 rounded-full border border-gray-300 focus:ring-2 focus:ring-[#806E53] focus:outline-none transition"
                 />
 
-                <!-- CLOSE -->
                 <button
                   @click="closeSearch"
-                  class="absolute right-8 top-1/2 -translate-y-1/2
-                         text-gray-400 hover:text-[#806E53]"
+                  class="absolute right-8 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#806E53]"
                 >
                   ✕
                 </button>
 
-                <!-- SUGGESTIONS -->
                 <div
-                  v-if="filteredSuggestions.length"
-                  class="absolute z-50 w-full mt-3 bg-white border shadow-lg rounded-2xl"
+                  v-if="searchResults.length || isSearching"
+                  class="absolute z-50 w-full mt-3 bg-white border shadow-lg rounded-2xl max-h-96 overflow-y-auto"
                 >
+                  <div v-if="isSearching" class="px-6 py-4 text-center text-gray-500">
+                    Searching...
+                  </div>
+
                   <div
-                    v-for="item in filteredSuggestions"
-                    :key="item"
-                    @click="selectSuggestion(item)"
-                    class="px-6 py-3 transition cursor-pointer hover:bg-gray-50"
+                    v-for="product in searchResults"
+                    :key="product.id"
+                    @click="selectProduct(product)"
+                    class="flex items-center gap-3 px-4 py-3 transition cursor-pointer hover:bg-gray-50"
                   >
-                    🔍 {{ item }}
+                    <img
+                      :src="product.image_url"
+                      :alt="product.name"
+                      class="w-12 h-12 rounded-lg object-cover"
+                    />
+                    <div class="flex-1">
+                      <h3 class="font-bold text-gray-900">{{ product.name }}</h3>
+                      <p class="text-sm text-gray-600">${{ product.price }}</p>
+                    </div>
+                  </div>
+
+                  <div
+                    v-if="!isSearching && searchQuery && searchResults.length === 0"
+                    class="px-6 py-4 text-center text-gray-500"
+                  >
+                    No products found
                   </div>
                 </div>
-
               </div>
             </div>
-
           </transition>
         </div>
 
-        <!-- MOBILE ICONS -->
         <div class="flex items-center space-x-2 md:hidden">
-
-          <!-- MOBILE SEARCH -->
-          <button
-            @click="openSearch"
-            :class="iconClass"
-            class="p-2 transition"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none"
-              viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z"/>
+          <button @click="openSearch" :class="iconClass" class="p-2 transition">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z"
+              />
             </svg>
           </button>
 
-          <!-- BURGER -->
           <button
             @click="isMenuOpen = !isMenuOpen"
             :class="{ 'text-white': !isScrolled, 'text-gray-600': isScrolled }"
             class="p-2 transition"
           >
-            <svg v-if="!isMenuOpen" class="w-6 h-6" fill="none"
-              viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h16"/>
+            <svg
+              v-if="!isMenuOpen"
+              class="w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
             </svg>
-            <svg v-else class="w-6 h-6" fill="none"
-              viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"/>
+            <svg v-else class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
-
         </div>
       </div>
     </div>
 
-    <!-- MOBILE MENU -->
     <div v-if="isMenuOpen && !isSearchOpen" class="bg-white shadow-inner md:hidden">
       <router-link to="/" class="block px-4 py-3">Home</router-link>
       <router-link to="/about" class="block px-4 py-3">About</router-link>
       <router-link to="/shop" class="block px-4 py-3">Shop</router-link>
       <router-link to="/contact-us" class="block px-4 py-3">Contact</router-link>
+      <router-link to="/profile" class="block px-4 py-3 font-bold text-blue-700"
+        >👤 Profile</router-link
+      >
+      <router-link to="/cart" class="block px-4 py-3 font-bold text-amber-700"
+        >Cart ({{ totalItems }})</router-link
+      >
     </div>
   </nav>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted, onUnmounted } from 'vue';
-import logoScrolled from '../assets/black-weblogo.png';
-import whiteLogoWeb from '../assets/whitelogoWeb.png';
+import { defineComponent, ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
+import logoScrolled from '../assets/black-weblogo.png'
+import whiteLogoWeb from '../assets/whitelogoWeb.png'
+import { cartState } from '../store' // Import the store
+import { supabase } from '../supabase'
 
 export default defineComponent({
   name: 'NavigationBar',
   setup() {
-    const isMenuOpen = ref(false);
-    const isSearchOpen = ref(false);
-    const isScrolled = ref(false);
-    const searchQuery = ref('');
+    const router = useRouter()
+    const isMenuOpen = ref(false)
+    const isSearchOpen = ref(false)
+    const isScrolled = ref(false)
+    const searchQuery = ref('')
+    const searchResults = ref<any[]>([])
+    const isSearching = ref(false)
 
-    const suggestions = [
-      'Angkor Wat Tour',
-      'Phnom Penh City',
-      'Siem Reap Travel',
-      'Local Handicrafts',
-      'Photography Spots',
-      'Food Experiences',
-    ];
+    // Computed total items count for the badge
+    const totalItems = computed(() => {
+      return cartState.items.reduce((sum, item) => sum + item.qty, 0)
+    })
 
-    const filteredSuggestions = computed(() =>
-      searchQuery.value
-        ? suggestions.filter(item =>
-            item.toLowerCase().includes(searchQuery.value.toLowerCase())
-          )
-        : []
-    );
+    // Search products in real-time
+    const searchProducts = async () => {
+      if (!searchQuery.value.trim()) {
+        searchResults.value = []
+        return
+      }
+
+      isSearching.value = true
+
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('id, name, price, image_url, slug')
+          .or(`name.ilike.%${searchQuery.value}%,description.ilike.%${searchQuery.value}%`)
+          .limit(5)
+
+        if (error) throw error
+        searchResults.value = data || []
+      } catch (err) {
+        console.error('Search error:', err)
+        searchResults.value = []
+      } finally {
+        isSearching.value = false
+      }
+    }
 
     const openSearch = () => {
-      isSearchOpen.value = true;
-      isMenuOpen.value = false;
-      searchQuery.value = '';
-    };
+      isSearchOpen.value = true
+      isMenuOpen.value = false
+      searchQuery.value = ''
+      searchResults.value = []
+    }
 
     const closeSearch = () => {
-      isSearchOpen.value = false;
-      searchQuery.value = '';
-    };
+      isSearchOpen.value = false
+      searchQuery.value = ''
+      searchResults.value = []
+    }
 
-    const selectSuggestion = (item: string) => {
-      searchQuery.value = item;
-    };
+    const selectProduct = (product: any) => {
+      router.push(`/products/${product.slug || product.id}`)
+      closeSearch()
+    }
 
     const handleScroll = () => {
-      isScrolled.value = window.scrollY > 100;
-    };
+      isScrolled.value = window.scrollY > 100
+    }
 
     onMounted(() => {
-      handleScroll();
-      window.addEventListener('scroll', handleScroll);
-    });
+      handleScroll()
+      window.addEventListener('scroll', handleScroll)
+    })
 
     onUnmounted(() => {
-      window.removeEventListener('scroll', handleScroll);
-    });
+      window.removeEventListener('scroll', handleScroll)
+    })
 
-    const linkClass = computed(() =>
-      `${isScrolled.value ? 'text-gray-600' : 'text-white'}
-       hover:bg-[#806E53] hover:text-white px-3 py-2 rounded-md text-lg transition`
-    );
+    const linkClass = computed(
+      () =>
+        `${isScrolled.value ? 'text-gray-600' : 'text-white'}
+       hover:bg-[#806E53] hover:text-white px-3 py-2 rounded-md text-lg transition`,
+    )
 
     const iconClass = computed(() =>
-      isScrolled.value
-        ? 'text-black hover:text-[#806E53]'
-        : 'text-white hover:text-[#A08A6F]'
-    );
+      isScrolled.value ? 'text-black hover:text-[#806E53]' : 'text-white hover:text-[#A08A6F]',
+    )
 
     return {
       isMenuOpen,
       isSearchOpen,
       isScrolled,
       searchQuery,
-      filteredSuggestions,
+      searchResults,
+      isSearching,
+      searchProducts,
       openSearch,
       closeSearch,
-      selectSuggestion,
+      selectProduct,
       linkClass,
       iconClass,
       logoScrolled,
       whiteLogoWeb,
-    };
+      totalItems,
+    }
   },
-});
+})
 </script>
 
 <style scoped>
