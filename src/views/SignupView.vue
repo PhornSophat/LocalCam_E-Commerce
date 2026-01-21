@@ -72,14 +72,23 @@ export default {
           },
         })
 
-        if (error) throw error
+        if (error) {
+          // Provide a clearer message for already registered users
+          if (error.message.includes('already') || error.status === 422) {
+            this.errorMessage = 'User already registered. Please log in or use a different email.'
+          } else {
+            this.errorMessage = error.message
+          }
+          throw error
+        }
 
         if (data.user) {
           alert('Account created! Please check your email for a confirmation link.')
           this.$router.push('/login')
         }
       } catch (error: any) {
-        this.errorMessage = error.message
+        // Error already handled above
+        console.error('Signup error:', error)
       } finally {
         this.loading = false
       }

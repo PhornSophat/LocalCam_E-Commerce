@@ -112,9 +112,12 @@ import { onMounted } from 'vue'
 import AdminLayout from './AdminLayout.vue'
 import { useAdminData } from '../../composables/useAdminData'
 
-const { orders, users, stats, lowStockItems, fetchData, updateOrderStatus } = useAdminData()
+const { orders, users, stats, lowStockItems, fetchData, fetchUsers, updateOrderStatus } =
+  useAdminData()
 
-onMounted(() => {
-  fetchData()
+onMounted(async () => {
+  // Ensure users are loaded so the dashboard stats and cards have data
+  await fetchData()
+  await fetchUsers()
 })
 </script>

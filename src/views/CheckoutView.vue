@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '@/supabase'
 import { cartState } from '@/store'
@@ -8,17 +8,16 @@ import { toast } from '@/utils/toast'
 const router = useRouter()
 
 const shippingForm = ref({
-  firstName: '',
-  lastName: '',
+  fullName: '',
   email: '',
-  address: '',
-  city: '',
-  country: '',
   phone: '',
+  address: '',
+  notes: '',
 })
 
-const paymentMethod = ref('card')
+const paymentMethod = ref('cod')
 const isProcessing = ref(false)
+const isLoadingProfile = ref(false)
 
 const subtotal = computed(() =>
   cartState.items.reduce((sum, item) => sum + item.price * item.qty, 0),
@@ -27,15 +26,44 @@ const tax = computed(() => subtotal.value * 0.1)
 const shipping = computed(() => (subtotal.value >= 50 ? 0 : 5.99))
 const total = computed(() => subtotal.value + tax.value + shipping.value)
 
+// Load user profile data on mount
+onMounted(async () => {
+  isLoadingProfile.value = true
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+    if (session) {
+      // Pre-fill email from auth
+      shippingForm.value.email = session.user.email || ''
+
+      // Try to get profile data
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name, email')
+        .eq('id', session.user.id)
+        .single()
+
+      if (profile) {
+        shippingForm.value.fullName = profile.full_name || ''
+      }
+    }
+  } catch (error) {
+    console.error('Error loading profile:', error)
+  } finally {
+    isLoadingProfile.value = false
+  }
+})
+
 const placeOrder = async () => {
   // Validation
-  if (!shippingForm.value.firstName || !shippingForm.value.lastName || !shippingForm.value.email) {
-    toast.warning('Please fill in all required fields')
+  if (!shippingForm.value.fullName || !shippingForm.value.email) {
+    toast.warning('Please enter your name and email')
     return
   }
 
-  if (!shippingForm.value.address || !shippingForm.value.city || !shippingForm.value.country) {
-    toast.warning('Please complete your shipping address')
+  if (!shippingForm.value.address) {
+    toast.warning('Please enter your delivery address')
     return
   }
 
@@ -54,15 +82,14 @@ const placeOrder = async () => {
   try {
     // Create order
     const orderData = {
-      user_id: session.user.id,
-      customer_name: `${shippingForm.value.firstName} ${shippingForm.value.lastName}`,
+      customer_name: shippingForm.value.fullName,
       total_price: total.value,
-      items_summary: cartState.items.map((i) => `${i.name} (x${i.qty})`).join(', '),
       status: 'pending',
-      shipping_address: `${shippingForm.value.address}, ${shippingForm.value.city}, ${shippingForm.value.country}`,
-      phone: shippingForm.value.phone,
-      email: shippingForm.value.email,
+      phone: shippingForm.value.phone || 'None',
+      items_summary: cartState.items.map((i) => `${i.name} (x${i.qty})`).join(', '),
       payment_method: paymentMethod.value,
+      email: shippingForm.value.email,
+      user_id: session.user.id,
     }
 
     const { error: orderError } = await supabase.from('orders').insert([orderData])
@@ -119,80 +146,63 @@ const placeOrder = async () => {
         <div class="lg:col-span-2 space-y-6">
           <!-- Shipping Information -->
           <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-            <h2 class="text-2xl font-black text-gray-900 mb-6">Shipping Information</h2>
+            <h2 class="text-2xl font-black text-gray-900 mb-6">Delivery Information</h2>
 
-            <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-4">
               <div>
-                <label class="block text-sm font-bold text-gray-700 mb-2">First Name *</label>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Full Name *</label>
                 <input
-                  v-model="shippingForm.firstName"
+                  v-model="shippingForm.fullName"
                   type="text"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                  placeholder="John"
+                  :disabled="isLoadingProfile"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-50"
+                  placeholder="John Doe"
                 />
               </div>
 
               <div>
-                <label class="block text-sm font-bold text-gray-700 mb-2">Last Name *</label>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Email *</label>
                 <input
-                  v-model="shippingForm.lastName"
-                  type="text"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                  placeholder="Doe"
-                />
-              </div>
-            </div>
-
-            <div class="mt-4">
-              <label class="block text-sm font-bold text-gray-700 mb-2">Email *</label>
-              <input
-                v-model="shippingForm.email"
-                type="email"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                placeholder="john@example.com"
-              />
-            </div>
-
-            <div class="mt-4">
-              <label class="block text-sm font-bold text-gray-700 mb-2">Address *</label>
-              <input
-                v-model="shippingForm.address"
-                type="text"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                placeholder="123 Main St"
-              />
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 mt-4">
-              <div>
-                <label class="block text-sm font-bold text-gray-700 mb-2">City *</label>
-                <input
-                  v-model="shippingForm.city"
-                  type="text"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                  placeholder="New York"
+                  v-model="shippingForm.email"
+                  type="email"
+                  :disabled="isLoadingProfile"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-50"
+                  placeholder="john@example.com"
                 />
               </div>
 
               <div>
-                <label class="block text-sm font-bold text-gray-700 mb-2">Country *</label>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Phone (optional)</label>
                 <input
-                  v-model="shippingForm.country"
-                  type="text"
+                  v-model="shippingForm.phone"
+                  type="tel"
                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                  placeholder="USA"
+                  placeholder="+855 12 345 678"
                 />
               </div>
-            </div>
 
-            <div class="mt-4">
-              <label class="block text-sm font-bold text-gray-700 mb-2">Phone</label>
-              <input
-                v-model="shippingForm.phone"
-                type="tel"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                placeholder="+1 (555) 123-4567"
-              />
+              <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Delivery Address *</label>
+                <textarea
+                  v-model="shippingForm.address"
+                  rows="3"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                  placeholder="Street address, building, floor, city, province..."
+                ></textarea>
+                <p class="text-xs text-gray-500 mt-1">Enter your complete delivery address</p>
+              </div>
+
+              <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2"
+                  >Delivery Notes (optional)</label
+                >
+                <textarea
+                  v-model="shippingForm.notes"
+                  rows="2"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                  placeholder="Any special instructions for delivery..."
+                ></textarea>
+              </div>
             </div>
           </div>
 
