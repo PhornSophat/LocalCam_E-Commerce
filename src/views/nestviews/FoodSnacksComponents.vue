@@ -106,6 +106,7 @@ const fetchProducts = async () => {
   const { data } = await supabase
     .from('products')
     .select('*')
+    .eq('category', 'food-snacks')
     .order('created_at', { ascending: false })
   foodsSnacks.value = data || []
 }

@@ -59,7 +59,11 @@ const router = useRouter();
 const beautyHomeProducts = ref<any[]>([]);
 
 const fetchProducts = async () => {
-  const { data } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+  const { data } = await supabase
+    .from('products')
+    .select('*')
+    .eq('category', 'souvenirs')
+    .order('created_at', { ascending: false });
   beautyHomeProducts.value = data || [];
 };
 
