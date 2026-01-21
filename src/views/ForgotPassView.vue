@@ -29,7 +29,7 @@
                         </h2>
                         <p class="text-base leading-relaxed opacity-90">
                             No worries! We'll send you a recovery link to your Gmail account
-                            so you can reset your password and get back to decorating your space.
+                            so you can reset your password and get back to shopping with peace of mind.
                         </p>
                     </div>
                 </div>
@@ -130,6 +130,7 @@
 </template>
 
 <script lang="ts">
+
 export default {
     data() {
         return {
