@@ -118,7 +118,7 @@
 
                 <div
                   v-if="searchResults.length || isSearching"
-                  class="absolute z-50 w-full mt-3 bg-white border shadow-lg rounded-2xl max-h-96 overflow-y-auto"
+                  class="absolute z-50 w-full mt-3 overflow-y-auto bg-white border shadow-lg rounded-2xl max-h-96"
                 >
                   <div v-if="isSearching" class="px-6 py-4 text-center text-gray-500">
                     Searching...
@@ -133,7 +133,7 @@
                     <img
                       :src="product.image_url"
                       :alt="product.name"
-                      class="w-12 h-12 rounded-lg object-cover"
+                      class="object-cover w-12 h-12 rounded-lg"
                     />
                     <div class="flex-1">
                       <h3 class="font-bold text-gray-900">{{ product.name }}</h3>
