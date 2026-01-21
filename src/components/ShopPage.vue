@@ -25,14 +25,33 @@
           through handcrafted wood & craft products
         </p>
         <button
-          class="px-10 py-4 text-lg font-semibold text-white transition-all duration-300 transform rounded-full shadow-2xl bg-linear-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 hover:scale-105"
+          @click="scrollToCollection"
+          class="group relative px-10 py-4 text-lg font-semibold text-white transition-all duration-300 transform rounded-full shadow-2xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 hover:scale-105 hover:shadow-amber-500/50 overflow-hidden"
         >
-          Explore Collection
+          <span class="relative z-10 flex items-center justify-center gap-2">
+            Explore Collection
+            <svg
+              class="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </span>
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-orange-600 to-amber-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          ></div>
         </button>
       </div>
     </section>
 
-    <section class="px-4 py-20 bg-linear-to-b from-white to-stone-50">
+    <section id="collection-section" class="px-4 py-20 bg-linear-to-b from-white to-stone-50">
       <div class="mx-auto max-w-7xl">
         <h2
           class="mb-4 text-5xl md:text-6xl text-stone-800"
@@ -236,9 +255,17 @@ const navigationTabs = [
   { name: 'All', path: '/shop' },
   { name: 'Foods & Snacks', path: '/shop/foods-snacks' },
   { name: 'Instruments Traditional', path: '/shop/instruments' },
-  { name: 'Beauty & Home', path: '/shop/beauty-home' },
-  { name: 'Delta & Outline', path: '/shop/delta-outline' },
+  { name: 'Souvenir', path: '/shop/souvenirs' },
+  { name: 'Clothing and textiles', path: '/shop/Clothing_and_textiles' },
 ]
+
+// Smooth scroll to collection section
+const scrollToCollection = () => {
+  const section = document.getElementById('collection-section')
+  if (section) {
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+}
 
 const fetchProducts = async () => {
   loading.value = true
