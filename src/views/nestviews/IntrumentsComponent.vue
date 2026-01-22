@@ -97,9 +97,9 @@ const allProducts = ref<any[]>([])
 const fetchProducts = async () => {
   const { data } = await supabase
     .from('products')
-    .select('*, categories(name)')
+    .select('*')
+    .eq('category', 'instruments')
     .order('created_at', { ascending: false })
-  // Filter for instruments category or show all if no category filter
   allProducts.value = data || []
 }
 

@@ -29,13 +29,10 @@ export default {
 
         if (authError) throw authError
 
-        // 2. Ensure user profile exists
-        try {
-          await ensureAdminProfile(authData.user.id, authData.user.email || this.email)
-        } catch (profileError) {
-          console.warn('Warning: Could not ensure profile exists:', profileError)
-          // Continue anyway - profile might exist or be created via trigger
-        }
+        // 2. Fire-and-forget profile setup (don't wait for it)
+        // The database trigger should create a profile automatically
+        // This happens in the background; don't block the redirect
+        ensureAdminProfile(authData.user.id, authData.user.email || this.email).catch(() => {})
 
         // 3. Check for 'redirect' query parameter (e.g., from Cart)
         // If the URL is /login?redirect=/cart, redirectTo will be '/cart'
@@ -46,12 +43,20 @@ export default {
           return // Exit early to avoid role-based logic
         }
 
-        // 4. Check if user is admin
-        const isAdmin = await isUserAdmin(authData.user.id)
+        // 4. Check if user is admin (with timeout to avoid blocking)
+        try {
+          const isAdmin = await Promise.race([
+            isUserAdmin(authData.user.id),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1000)),
+          ])
 
-        if (isAdmin) {
-          this.$router.push('/admin')
-        } else {
+          if (isAdmin) {
+            this.$router.push('/admin')
+          } else {
+            this.$router.push('/')
+          }
+        } catch (err) {
+          // If admin check times out, just go to home (safe default)
           this.$router.push('/')
         }
       } catch (error: any) {

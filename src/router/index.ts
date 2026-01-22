@@ -2,6 +2,35 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import { supabase } from '../supabase' // 1. Import your supabase client
 
+// Cache to avoid repeated session checks
+let cachedSession: any = null
+let cacheExpiry = 0
+
+async function getCachedSession() {
+  const now = Date.now()
+  // Use cached session if less than 30 seconds old
+  if (cachedSession !== null && cacheExpiry > now) {
+    return cachedSession
+  }
+
+  try {
+    const sessionPromise = supabase.auth.getSession()
+    const timeoutPromise = new Promise(
+      (_, reject) => setTimeout(() => reject(new Error('timeout')), 500), // Reduced to 500ms
+    )
+
+    const result = await Promise.race([sessionPromise, timeoutPromise])
+    cachedSession = result?.data?.session || null
+    cacheExpiry = now + 30000 // Cache for 30 seconds
+    return cachedSession
+  } catch (err) {
+    // Timeout or error; return null silently (don't spam console)
+    cachedSession = null
+    cacheExpiry = now + 5000 // Retry after 5 seconds
+    return null
+  }
+}
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
 
@@ -32,14 +61,14 @@ const router = createRouter({
           component: () => import('../views/nestviews/IntrumentsComponent.vue'),
         },
         {
-          path: 'beauty-home',
-          name: 'BeautyHome',
-          component: () => import('../views/nestviews/BeautyHomeComponent.vue'),
+          path: 'souvenirs',
+          name: 'Souvenirs',
+          component: () => import('../views/nestviews/SouvenirComponent.vue'),
         },
         {
-          path: 'delta-outline',
-          name: 'DeltaOutline',
-          component: () => import('../views/nestviews/DeltaOutlineComponent.vue'),
+          path: 'clothing_and_textiles',
+          name: 'ClothingAndTextiles',
+          component: () => import('../views/nestviews/Clothing_and _Textiles.vue'),
         },
       ],
     },
@@ -136,37 +165,57 @@ const router = createRouter({
  * ===================== */
 // 3. This runs before every page change
 router.beforeEach(async (to, from, next) => {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-
-  // Check if route requires authentication
-  if (to.meta.requiresAuth) {
-    if (!session) {
-      return next(`/login?redirect=${to.path}`)
-    }
-    next()
-  } else if (to.meta.requiresAdmin) {
-    // If not logged in at all
-    if (!session) {
-      return next('/login')
+  try {
+    // Skip auth checks entirely for public routes (fast path)
+    if (!to.meta.requiresAuth && !to.meta.requiresAdmin) {
+      return next()
     }
 
-    // Check the 'profiles' table for the 'admin' role
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', session.user.id)
-      .single()
+    // Only check session for protected routes
+    const session = await getCachedSession()
 
-    if (profile && profile.role === 'admin') {
-      next() // Access granted
-    } else {
-      alert('Access Denied: Admins Only')
-      next('/') // Kick back to home
+    // Check if route requires authentication
+    if (to.meta.requiresAuth) {
+      if (!session) {
+        return next(`/login?redirect=${to.path}`)
+      }
+      return next()
+    } else if (to.meta.requiresAdmin) {
+      // If not logged in at all
+      if (!session) {
+        return next('/login')
+      }
+
+      // Check the 'profiles' table for the 'admin' role (with timeout)
+      try {
+        const profilePromise = supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single()
+
+        const profileTimeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('timeout')), 1000),
+        )
+
+        const profileResult = await Promise.race([profilePromise, profileTimeoutPromise])
+        const profile = profileResult?.data
+
+        if (profile && profile.role === 'admin') {
+          return next() // Access granted
+        } else {
+          alert('Access Denied: Admins Only')
+          return next('/') // Kick back to home
+        }
+      } catch (err) {
+        // Profile check failed/timeout; deny access as a safe default
+        alert('Access Denied: Unable to verify admin status')
+        return next('/')
+      }
     }
-  } else {
-    // Not a protected route? Just let them go.
+  } catch (err) {
+    // Unexpected error; log and allow navigation to not block the user
+    console.error('Router guard unexpected error:', err)
     next()
   }
 })
