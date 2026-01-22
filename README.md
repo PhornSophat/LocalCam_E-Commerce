@@ -9,7 +9,7 @@ This template should help get you started developing with Vue 3 in Vite.
 ## Recommended Browser Setup
 
 - Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
+  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
   - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
 - Firefox:
   - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
@@ -26,7 +26,12 @@ See [Vite Configuration Reference](https://vite.dev/config/).
 ## Project Setup
 
 ```sh
+# 1. Install dependencies
 npm install
+
+# 2. Set up environment variables
+cp .env.example .env
+# Edit .env if needed with your Supabase credentials
 ```
 
 ### Compile and Hot-Reload for Development
@@ -34,6 +39,8 @@ npm install
 ```sh
 npm run dev
 ```
+
+**Important:** After creating or modifying the `.env` file, you must restart the dev server for changes to take effect.
 
 ### Type-Check, Compile and Minify for Production
 
