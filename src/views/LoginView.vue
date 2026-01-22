@@ -57,12 +57,22 @@ export default {
           }
         } catch (err) {
           // If admin check times out, just go to home (safe default)
+          console.error('Login error:', err)
+          if (err instanceof Error) {
+            this.errorMessage = err.message
+          } else {
+            this.errorMessage = 'Failed to sign in. Please check your email and password.'
+          }
           this.$router.push('/')
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Login error:', error)
-        this.errorMessage =
-          error.message || 'Failed to sign in. Please check your email and password.'
+        // Check if the error is a real Error object before reading .message
+        if (error instanceof Error) {
+          this.errorMessage = error.message
+        } else {
+          this.errorMessage = 'Failed to sign in. Please check your email and password.'
+        }
       } finally {
         this.loading = false
       }
