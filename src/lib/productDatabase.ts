@@ -1,126 +1,21 @@
 /**
  * Enhanced Product Database
- * Real Cambodian Products with Detailed Information
- */
 
-export const enhancedProducts = [
-  {
-    id: 1,
-    name: 'Organic Palm Sugar',
-    slug: 'organic-palm-sugar',
-    category: 'food-snacks',
-    price: 8.99,
-    originalPrice: 12.99,
-    rating: 4.8,
-    reviews: 245,
-    image: 'https://images.unsplash.com/photo-1599599810694-b5ac4dd47952?w=500&h=500&fit=crop',
-    description:
-      'Premium organic palm sugar from Cambodia with authentic caramel flavor. Sustainably harvested from palm trees.',
-    stock: 150,
-    sku: 'PS-ORG-001',
-    details: [
-      'Made from 100% natural palm tree sap',
-      'No artificial additives or preservatives',
-      'Fair trade certified',
-      'Rich caramel and molasses notes',
-      'Perfect for baking and beverages',
-    ],
-    shippingInfo: 'Free shipping on orders over $50. Ships within 2-3 business days.',
-    overview:
-      'Our organic palm sugar is sourced directly from Cambodian farmers, ensuring fair prices and sustainable practices. Rich in minerals and with a lower glycemic index than refined sugar.',
-    images: [
-      'https://images.unsplash.com/photo-1599599810694-b5ac4dd47952?w=500&h=500&fit=crop',
-      'https://images.unsplash.com/photo-1599599810990-c495ce1b7e2a?w=500&h=500&fit=crop',
-    ],
-  },
-  {
-    id: 2,
-    name: 'Traditional Krama Scarf',
-    slug: 'traditional-krama',
-    category: 'textiles',
-    price: 15.99,
-    originalPrice: 19.99,
-    rating: 4.9,
-    reviews: 189,
-    image: 'https://images.unsplash.com/photo-1599599810963-3aa10e5a92d2?w=500&h=500&fit=crop',
-    description:
-      'Handwoven traditional Cambodian krama with authentic patterns. Perfect for any season and occasion.',
-    stock: 75,
-    sku: 'KRAMA-001',
-    details: [
-      'Hand-woven cotton fabric',
-      'Traditional red and white checkered pattern',
-      'Multi-purpose: headwear, belt, wrap',
-      'Breathable and lightweight',
-      'Perfect for tropical climate',
-      'Each piece unique',
-    ],
-    shippingInfo: 'Free shipping on orders over $50. Ships within 3-5 business days.',
-    overview:
-      'The krama is an iconic piece of Cambodian culture. Our hand-woven versions are made by local artisans using traditional techniques passed down through generations.',
-    images: [
-      'https://images.unsplash.com/photo-1599599810963-3aa10e5a92d2?w=500&h=500&fit=crop',
-      'https://images.unsplash.com/photo-1599599810744-5d6bfd1f4f8d?w=500&h=500&fit=crop',
-    ],
-  },
-  {
-    id: 3,
-    name: 'Cambodian Silk Scarves',
-    slug: 'cambodian-silk-scarves',
-    category: 'textiles',
-    price: 24.99,
-    originalPrice: 34.99,
-    rating: 4.7,
-    reviews: 156,
-    image: 'https://images.unsplash.com/photo-1599599810964-4f8f8f8f8f8f?w=500&h=500&fit=crop',
-    description:
-      'Premium hand-loomed Cambodian silk with vibrant traditional patterns. Luxury textile for discerning customers.',
-    stock: 45,
-    sku: 'SILK-CAM-001',
-    details: [
-      'Pure mulberry silk (100%)',
-      'Hand-loomed by skilled artisans',
-      'Natural dyes from local plants',
-      'Available in 5 traditional patterns',
-      'Durable yet luxuriously soft',
-      'Perfect for special occasions',
-    ],
-    shippingInfo: 'Free shipping on orders over $50. Ships within 5-7 business days.',
-    overview:
-      'Cambodian silk has been prized for centuries. Each scarf is hand-loomed using traditional techniques and natural dyes, making every piece unique.',
-    images: [
-      'https://images.unsplash.com/photo-1599599810964-4f8f8f8f8f8f?w=500&h=500&fit=crop',
-      'https://images.unsplash.com/photo-1599599810965-5f5f5f5f5f5f?w=500&h=500&fit=crop',
-    ],
-  },
-  {
-    id: 4,
-    name: 'Cambodian Pepper Black',
-    slug: 'cambodian-pepper-black',
-    category: 'food-snacks',
-    price: 12.99,
-    originalPrice: 16.99,
-    rating: 4.6,
-    reviews: 203,
-    image: 'https://images.unsplash.com/photo-1599599810694-b5ac4dd47952?w=500&h=500&fit=crop',
-    description:
-      'Premium Kampot black pepper from Cambodia. World-renowned for its intense flavor and complexity. UNESCO recognized.',
-    stock: 200,
-    sku: 'PEPPER-KAMPOT-001',
-    details: [
-      'Kampot PDO certified',
-      'Strong aromatic flavor',
-      'Perfect for grinding',
-      'Sourced from heritage pepper farms',
-      'No additives or fillers',
-      'Ideal for gourmet cooking',
-    ],
-    shippingInfo: 'Free shipping on orders over $50. Ships within 2-3 business days.',
-    overview:
-      'Kampot pepper is famous worldwide for its unique complexity and intense flavor. Our sourcing directly supports local farmers and preserves this UNESCO-recognized agricultural tradition.',
-    images: ['https://images.unsplash.com/photo-1599599810694-b5ac4dd47952?w=500&h=500&fit=crop'],
-  },
-  {
+import { supabase } from '../supabase';
+
+export async function fetchProducts() {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*');
+  if (error) {
+    // Optionally use toast for error notification
+    if (typeof window !== 'undefined' && (window as any).showToast) {
+      (window as any).showToast('Failed to fetch products', 'error', 4000);
+    }
+    return [];
+  }
+  return data || [];
+}
     id: 5,
     name: 'Artisan Wooden Utensils Set',
     slug: 'wooden-utensils-set',
