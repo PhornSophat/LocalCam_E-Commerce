@@ -106,7 +106,6 @@ const fetchProducts = async () => {
   const { data } = await supabase
     .from('products')
     .select('*')
-    .eq('category', 'delta-outline')
     .order('created_at', { ascending: false })
   deltaProducts.value = data || []
 }

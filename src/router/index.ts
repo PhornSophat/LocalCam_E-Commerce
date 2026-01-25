@@ -137,40 +137,57 @@ const router = createRouter({
 /* =====================
  * Navigation Guard
  * ===================== */
-router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
+router.beforeEach(
+  async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
 
-  // Check if route requires authentication
-  if (to.meta.requiresAuth) {
-    if (!session) {
-      return next(`/login?redirect=${to.path}`)
-    }
-    next()
-  } else if (to.meta.requiresAdmin) {
-    // If not logged in at all
-    if (!session) {
-      return next('/login')
-    }
+    // Check if route requires authentication
+    if (to.meta.requiresAuth) {
+      if (!session) {
+        return next(`/login?redirect=${to.path}`)
+      }
+      next()
+    } else if (to.meta.requiresAdmin) {
+      // If not logged in at all
+      if (!session) {
+        return next('/login')
+      }
 
-    // Check the 'profiles' table for the 'admin' role
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', session.user.id)
-      .single()
+      // Check the 'profiles' table for the 'admin' role
+      try {
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single()
 
-    if (profile && profile.role === 'admin') {
-      next() // Access granted
+        if (error) {
+          console.error('Error checking admin role:', error)
+          // If profiles table doesn't exist or has errors, deny access
+          alert(
+            'Unable to verify admin access. Please ensure the profiles table is set up correctly.',
+          )
+          return next('/')
+        }
+
+        if (profile && profile.role === 'admin') {
+          next() // Access granted
+        } else {
+          // alert('Access Denied: Admins Only') // Optional: Comment out to avoid alerts during tests
+          next('/') // Kick back to home
+        }
+      } catch (err) {
+        console.error('Exception checking admin role:', err)
+        alert('Error verifying admin access.')
+        next('/')
+      }
     } else {
-      // alert('Access Denied: Admins Only') // Optional: Comment out to avoid alerts during tests
-      next('/') // Kick back to home
+      // Not a protected route? Just let them go.
+      next()
     }
-  } else {
-    // Not a protected route? Just let them go.
-    next()
-  }
-})
+  },
+)
 
 export default router

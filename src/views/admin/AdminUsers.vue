@@ -49,13 +49,37 @@ git <template>
         v-if="userError"
         class="flex items-center justify-between gap-3 p-4 text-sm font-medium border text-amber-200 bg-amber-500/10 border-amber-500/40 rounded-2xl"
       >
-        <span>{{ userError }}</span>
-        <button
-          class="text-[10px] font-black uppercase text-amber-200 underline"
-          @click="refreshUsers"
-        >
-          Retry
-        </button>
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <p class="mb-2 text-base font-bold text-red-300">
+              ❌ Unable to load users from profiles table
+            </p>
+            <p class="mb-3 text-red-200">{{ userError }}</p>
+            <p class="text-xs text-red-300">
+              This is likely due to Row Level Security (RLS) policies blocking admin access to the
+              profiles table.
+            </p>
+          </div>
+          <button
+            class="text-[10px] font-black uppercase text-red-200 underline whitespace-nowrap"
+            @click="refreshUsers"
+          >
+            Retry
+          </button>
+        </div>
+        <div class="p-4 border bg-slate-900/50 rounded-xl border-slate-700">
+          <p class="mb-2 text-xs font-bold text-slate-300">🔧 Quick Fix:</p>
+          <ol class="space-y-1 text-xs list-decimal list-inside text-slate-400">
+            <li>Go to Supabase Dashboard → SQL Editor</li>
+            <li>
+              Run the script:
+              <code class="px-2 py-1 text-indigo-300 rounded bg-slate-800"
+                >scripts/sql/profiles-admin-access.sql</code
+              >
+            </li>
+            <li>Click Retry above</li>
+          </ol>
+        </div>
       </div>
 
       <div

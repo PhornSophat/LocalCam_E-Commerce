@@ -49,6 +49,15 @@ CREATE POLICY "Allow service role"
   ON profiles FOR ALL
   USING (auth.role() = 'service_role');
 
+-- Policy: Admins can read all profiles
+CREATE POLICY "Admins can read all profiles"
+  ON profiles FOR SELECT
+  USING (
+    auth.uid() IN (
+      SELECT id FROM profiles WHERE role = 'admin'
+    )
+  );
+
 -- Create an index for faster queries
 CREATE INDEX IF NOT EXISTS profiles_email_idx ON profiles(email);
 CREATE INDEX IF NOT EXISTS profiles_role_idx ON profiles(role);

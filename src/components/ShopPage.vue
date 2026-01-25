@@ -269,14 +269,19 @@ const scrollToCollection = () => {
 
 const fetchProducts = async () => {
   loading.value = true
-  const { data, error } = await supabase.from('products').select('*')
+  try {
+    const { data, error: fetchError } = await supabase.from('products').select('*')
 
-  if (error) {
-    console.error('Error fetching products:', error.message)
-  } else {
-    freshProducts.value = data
+    if (fetchError) {
+      console.error('Error fetching products:', fetchError)
+    } else {
+      freshProducts.value = data || []
+    }
+  } catch (err) {
+    console.error('Exception fetching products:', err)
+  } finally {
+    loading.value = false
   }
-  loading.value = false
 }
 
 // Cart logic with Stock Validation
