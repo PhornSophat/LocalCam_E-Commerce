@@ -29,7 +29,9 @@
           </div>
           <div class="flex items-center gap-8 mt-4 md:mt-0">
             <div class="text-right">
-              <p class="text-2xl font-black text-white">${{ order.total_price }}</p>
+              <p class="text-2xl font-black text-white">
+                ${{ Number(order.total_price).toFixed(2) }}
+              </p>
               <p class="text-[9px] font-black text-slate-500 uppercase">
                 {{ new Date(order.created_at).toLocaleDateString() }}
               </p>
@@ -161,12 +163,14 @@
                 <div class="flex-1">
                   <h6 class="font-bold text-white">{{ item.product.name }}</h6>
                   <p class="text-xs text-slate-400">
-                    ${{ item.product.price }} × {{ item.quantity }}
+                    ${{ Number(item.product.price).toFixed(2) }} × {{ item.quantity }}
                   </p>
                 </div>
                 <!-- Subtotal -->
                 <div class="text-right">
-                  <p class="font-bold text-white">${{ item.product.price * item.quantity }}</p>
+                  <p class="font-bold text-white">
+                    ${{ (Number(item.product.price) * item.quantity).toFixed(2) }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -179,7 +183,9 @@
           <div class="p-6 mt-4 border bg-indigo-500/10 border-indigo-500/30 rounded-2xl">
             <div class="flex items-center justify-between">
               <span class="text-lg font-black text-indigo-400 uppercase">Total Amount</span>
-              <span class="text-3xl font-black text-white">${{ selectedOrder.total_price }}</span>
+              <span class="text-3xl font-black text-white"
+                >${{ Number(selectedOrder.total_price).toFixed(2) }}</span
+              >
             </div>
           </div>
         </div>

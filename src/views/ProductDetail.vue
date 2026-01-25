@@ -13,6 +13,7 @@ const product = ref<any>(null)
 const reviews = ref<any[]>([])
 const similarProducts = ref<any[]>([])
 const loading = ref(true)
+const isLoggedIn = ref(false)
 
 // Route slug
 const route = useRoute()
@@ -26,15 +27,18 @@ const fetchProduct = async () => {
     // Try to find by slug first
     let { data, error } = await supabase
       .from('products')
-      .select('*, categories(name)')
+      .select('*')
       .eq('slug', slug.value)
       .single()
 
     // If no slug match, try to match by generated slug from name
     if (error || !data) {
-      const { data: allProducts } = await supabase.from('products').select('*, categories(name)')
+      const { data: allProducts, error: allError } = await supabase.from('products').select('*')
 
-      if (allProducts) {
+      if (allError) {
+        console.error('Error fetching products:', allError)
+        product.value = null
+      } else if (allProducts) {
         const found = allProducts.find((p) => {
           const generatedSlug = p.name.toLowerCase().replace(/\s+/g, '-')
           return generatedSlug === slug.value
@@ -85,7 +89,13 @@ watch(
 )
 
 // Lifecycle
-onMounted(fetchProduct)
+onMounted(async () => {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+  isLoggedIn.value = !!session
+  await fetchProduct()
+})
 
 // Thumbnail swap - not used for now since we only have one image
 const selectThumbnail = (imageUrl: string) => {
@@ -99,8 +109,18 @@ const incrementQuantity = () => {
 const decrementQuantity = () => {
   if (quantity.value > 1) quantity.value--
 }
-const addToCart = () => {
+const addToCart = async () => {
   if (!product.value) return
+
+  // Check if user is authenticated
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+  if (!session) {
+    toast.warning('Please log in to add items to cart')
+    router.push(`/login?redirect=${router.currentRoute.value.path}`)
+    return
+  }
 
   if (product.value.stock < quantity.value) {
     toast.error(`Only ${product.value.stock} items available in stock`)
@@ -196,34 +216,51 @@ onBeforeUnmount(() => {
             </div>
 
             <!-- Quantity & Add to Cart -->
-            <div class="flex items-center gap-6">
-              <div class="flex items-center border border-gray-300 rounded-lg">
+            <div class="space-y-4">
+              <!-- Login Required Message (non-logged-in users) -->
+              <div v-if="!isLoggedIn" class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p class="text-sm font-semibold text-blue-900">
+                  👤 Sign in to add items to your cart
+                </p>
+              </div>
+
+              <div class="flex items-center gap-6">
+                <div v-if="isLoggedIn" class="flex items-center border border-gray-300 rounded-lg">
+                  <button
+                    @click="decrementQuantity"
+                    class="px-4 py-2 text-gray-600 transition hover:bg-gray-100"
+                  >
+                    −
+                  </button>
+                  <input
+                    v-model.number="quantity"
+                    type="number"
+                    min="1"
+                    class="w-16 text-center border-0 focus:outline-none"
+                  />
+                  <button
+                    @click="incrementQuantity"
+                    class="px-4 py-2 text-gray-600 transition hover:bg-gray-100"
+                  >
+                    +
+                  </button>
+                </div>
                 <button
-                  @click="decrementQuantity"
-                  class="px-4 py-2 text-gray-600 transition hover:bg-gray-100"
+                  v-if="isLoggedIn"
+                  @click="addToCart"
+                  :disabled="product.stock <= 0"
+                  class="flex items-center justify-center flex-1 gap-2 px-6 py-3 font-semibold text-white transition bg-black rounded-lg hover:bg-white hover:text-black hover:border-2 hover:border-black disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  −
+                  ADD TO CART
                 </button>
-                <input
-                  v-model.number="quantity"
-                  type="number"
-                  min="1"
-                  class="w-16 text-center border-0 focus:outline-none"
-                />
                 <button
-                  @click="incrementQuantity"
-                  class="px-4 py-2 text-gray-600 transition hover:bg-gray-100"
+                  v-else
+                  @click="router.push(`/login?redirect=${router.currentRoute.value.path}`)"
+                  class="flex items-center justify-center flex-1 gap-2 px-6 py-3 font-semibold text-white transition bg-blue-600 rounded-lg hover:bg-blue-700"
                 >
-                  +
+                  SIGN IN TO SHOP
                 </button>
               </div>
-              <button
-                @click="addToCart"
-                :disabled="product.stock <= 0"
-                class="flex items-center justify-center flex-1 gap-2 px-6 py-3 font-semibold text-white transition bg-black rounded-lg hover:bg-white hover:text-black hover:border-2 hover:border-black disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                ADD TO CART
-              </button>
             </div>
 
             <!-- Expandable Sections -->

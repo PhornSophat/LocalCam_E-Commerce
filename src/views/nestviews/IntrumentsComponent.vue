@@ -98,7 +98,6 @@ const fetchProducts = async () => {
   const { data } = await supabase
     .from('products')
     .select('*')
-    .eq('category', 'instruments')
     .order('created_at', { ascending: false })
   allProducts.value = data || []
 }
