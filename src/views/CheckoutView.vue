@@ -23,7 +23,7 @@ const subtotal = computed(() =>
   cartState.items.reduce((sum, item) => sum + item.price * item.qty, 0),
 )
 const tax = computed(() => subtotal.value * 0.1)
-const shipping = computed(() => (subtotal.value >= 50 ? 0 : 5.99))
+const shipping = computed(() => (subtotal.value >= 50 ? 0 : 5.00))
 const total = computed(() => subtotal.value + tax.value + shipping.value)
 
 // Load user profile data on mount
@@ -133,24 +133,24 @@ const placeOrder = async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pt-24 pb-16 font-Poppins">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="min-h-screen pt-24 pb-16 bg-gradient-to-br from-slate-50 to-slate-100 font-Poppins">
+    <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
       <!-- Header -->
       <div class="mb-8">
-        <h1 class="text-4xl font-black text-gray-900 mb-2">Checkout</h1>
+        <h1 class="mb-2 text-4xl font-black text-gray-900">Checkout</h1>
         <p class="text-gray-600">Complete your order</p>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <!-- Checkout Form -->
-        <div class="lg:col-span-2 space-y-6">
+        <div class="space-y-6 lg:col-span-2">
           <!-- Shipping Information -->
-          <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-            <h2 class="text-2xl font-black text-gray-900 mb-6">Delivery Information</h2>
+          <div class="p-6 bg-white border border-gray-200 shadow-sm rounded-2xl">
+            <h2 class="mb-6 text-2xl font-black text-gray-900">Delivery Information</h2>
 
             <div class="space-y-4">
               <div>
-                <label class="block text-sm font-bold text-gray-700 mb-2">Full Name *</label>
+                <label class="block mb-2 text-sm font-bold text-gray-700">Full Name *</label>
                 <input
                   v-model="shippingForm.fullName"
                   type="text"
@@ -161,7 +161,7 @@ const placeOrder = async () => {
               </div>
 
               <div>
-                <label class="block text-sm font-bold text-gray-700 mb-2">Email *</label>
+                <label class="block mb-2 text-sm font-bold text-gray-700">Email *</label>
                 <input
                   v-model="shippingForm.email"
                   type="email"
@@ -172,7 +172,7 @@ const placeOrder = async () => {
               </div>
 
               <div>
-                <label class="block text-sm font-bold text-gray-700 mb-2">Phone (optional)</label>
+                <label class="block mb-2 text-sm font-bold text-gray-700">Phone (optional)</label>
                 <input
                   v-model="shippingForm.phone"
                   type="tel"
@@ -182,18 +182,18 @@ const placeOrder = async () => {
               </div>
 
               <div>
-                <label class="block text-sm font-bold text-gray-700 mb-2">Delivery Address *</label>
+                <label class="block mb-2 text-sm font-bold text-gray-700">Delivery Address *</label>
                 <textarea
                   v-model="shippingForm.address"
                   rows="3"
                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
                   placeholder="Street address, building, floor, city, province..."
                 ></textarea>
-                <p class="text-xs text-gray-500 mt-1">Enter your complete delivery address</p>
+                <p class="mt-1 text-xs text-gray-500">Enter your complete delivery address</p>
               </div>
 
               <div>
-                <label class="block text-sm font-bold text-gray-700 mb-2"
+                <label class="block mb-2 text-sm font-bold text-gray-700"
                   >Delivery Notes (optional)</label
                 >
                 <textarea
@@ -207,12 +207,12 @@ const placeOrder = async () => {
           </div>
 
           <!-- Payment Method -->
-          <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-            <h2 class="text-2xl font-black text-gray-900 mb-6">Payment Method</h2>
+          <div class="p-6 bg-white border border-gray-200 shadow-sm rounded-2xl">
+            <h2 class="mb-6 text-2xl font-black text-gray-900">Payment Method</h2>
 
             <div class="space-y-3">
               <label
-                class="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition"
+                class="flex items-center p-4 transition border-2 rounded-lg cursor-pointer hover:bg-gray-50"
                 :class="paymentMethod === 'card' ? 'border-black bg-gray-50' : 'border-gray-200'"
               >
                 <input type="radio" v-model="paymentMethod" value="card" class="mr-3" />
@@ -220,7 +220,7 @@ const placeOrder = async () => {
               </label>
 
               <label
-                class="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition"
+                class="flex items-center p-4 transition border-2 rounded-lg cursor-pointer hover:bg-gray-50"
                 :class="paymentMethod === 'paypal' ? 'border-black bg-gray-50' : 'border-gray-200'"
               >
                 <input type="radio" v-model="paymentMethod" value="paypal" class="mr-3" />
@@ -228,7 +228,7 @@ const placeOrder = async () => {
               </label>
 
               <label
-                class="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition"
+                class="flex items-center p-4 transition border-2 rounded-lg cursor-pointer hover:bg-gray-50"
                 :class="paymentMethod === 'cod' ? 'border-black bg-gray-50' : 'border-gray-200'"
               >
                 <input type="radio" v-model="paymentMethod" value="cod" class="mr-3" />
@@ -240,19 +240,19 @@ const placeOrder = async () => {
 
         <!-- Order Summary -->
         <div class="lg:col-span-1">
-          <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 sticky top-24">
-            <h2 class="text-2xl font-black text-gray-900 mb-6">Order Summary</h2>
+          <div class="sticky p-6 bg-white border border-gray-200 shadow-lg rounded-2xl top-24">
+            <h2 class="mb-6 text-2xl font-black text-gray-900">Order Summary</h2>
 
             <!-- Order Items -->
-            <div class="space-y-3 mb-6 max-h-64 overflow-y-auto">
+            <div class="mb-6 space-y-3 overflow-y-auto max-h-64">
               <div v-for="item in cartState.items" :key="item.id" class="flex gap-3">
                 <img
                   :src="item.image_url || item.image"
                   :alt="item.name"
-                  class="w-16 h-16 rounded-lg object-cover"
+                  class="object-cover w-16 h-16 rounded-lg"
                 />
                 <div class="flex-1 min-w-0">
-                  <h3 class="font-bold text-sm text-gray-900 truncate">{{ item.name }}</h3>
+                  <h3 class="text-sm font-bold text-gray-900 truncate">{{ item.name }}</h3>
                   <p class="text-sm text-gray-600">Qty: {{ item.qty }}</p>
                   <p class="text-sm font-bold text-gray-900">
                     ${{ (item.price * item.qty).toFixed(2) }}
@@ -261,7 +261,7 @@ const placeOrder = async () => {
               </div>
             </div>
 
-            <div class="border-t pt-4 space-y-3 mb-6">
+            <div class="pt-4 mb-6 space-y-3 border-t">
               <div class="flex justify-between text-gray-700">
                 <span>Subtotal</span>
                 <span class="font-semibold">${{ subtotal.toFixed(2) }}</span>
@@ -276,7 +276,7 @@ const placeOrder = async () => {
                   {{ shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}` }}
                 </span>
               </div>
-              <div class="border-t pt-3 flex justify-between text-xl font-black text-gray-900">
+              <div class="flex justify-between pt-3 text-xl font-black text-gray-900 border-t">
                 <span>Total</span>
                 <span>${{ total.toFixed(2) }}</span>
               </div>
@@ -285,14 +285,14 @@ const placeOrder = async () => {
             <button
               @click="placeOrder"
               :disabled="isProcessing"
-              class="w-full py-4 bg-black text-white font-bold rounded-lg hover:bg-gray-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-full py-4 font-bold text-white transition bg-black rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {{ isProcessing ? 'Processing...' : 'Place Order' }}
             </button>
 
             <button
               @click="router.push('/cart')"
-              class="w-full mt-3 py-3 border-2 border-gray-300 text-gray-700 font-bold rounded-lg hover:bg-gray-50 transition"
+              class="w-full py-3 mt-3 font-bold text-gray-700 transition border-2 border-gray-300 rounded-lg hover:bg-gray-50"
             >
               Back to Cart
             </button>

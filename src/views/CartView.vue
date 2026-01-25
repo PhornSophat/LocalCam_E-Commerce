@@ -6,6 +6,20 @@ import { toast } from '../utils/toast'
 import { supabase } from '../supabase'
 
 const router = useRouter()
+const isAuthenticated = ref(false)
+
+// Check authentication on mount
+onMounted(async () => {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+  if (!session) {
+    toast.warning('Please log in to view your cart')
+    router.push('/login?redirect=/cart')
+    return
+  }
+  isAuthenticated.value = true
+})
 
 // Cart items from global state
 const cartItems = computed(() => cartState.items)
@@ -31,7 +45,7 @@ const updateQuantity = (item: any, newQty: number) => {
 
 // Remove item
 const removeItem = (itemId: number) => {
-  const index = cartState.items.findIndex(i => i.id === itemId)
+  const index = cartState.items.findIndex((i) => i.id === itemId)
   if (index > -1) {
     const itemName = cartState.items[index].name
     cartState.items.splice(index, 1)
@@ -53,18 +67,19 @@ const proceedToCheckout = async () => {
     toast.warning('Your cart is empty')
     return
   }
-  
+
   // Check if user is logged in
-  const { data: { session } } = await supabase.auth.getSession()
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
   if (!session) {
     toast.warning('Please login to checkout')
     router.push('/login')
     return
   }
-  
+
   router.push('/checkout')
 }
-
 </script>
 
 <template>
@@ -121,7 +136,9 @@ const proceedToCheckout = async () => {
                   </button>
                   <input
                     :value="item.qty"
-                    @change="updateQuantity(item, parseInt(($event.target as HTMLInputElement).value))"
+                    @change="
+                      updateQuantity(item, parseInt(($event.target as HTMLInputElement).value))
+                    "
                     type="number"
                     min="1"
                     :max="item.stock"
@@ -210,7 +227,11 @@ const proceedToCheckout = async () => {
 
             <div class="p-4 mt-6 rounded-lg bg-green-50">
               <p class="text-sm font-medium text-green-800">
-                {{ shipping === 0 ? '🎉 You have free shipping!' : '📦 Add $' + (50 - subtotal).toFixed(2) + ' more for free shipping' }}
+                {{
+                  shipping === 0
+                    ? '🎉 You have free shipping!'
+                    : '📦 Add $' + (50 - subtotal).toFixed(2) + ' more for free shipping'
+                }}
               </p>
             </div>
           </div>
@@ -219,7 +240,7 @@ const proceedToCheckout = async () => {
     </div>
   </div>
 </template>
-        <!-- <p class="mt-4 text-[10px] text-center text-stone-500 font-bold uppercase tracking-tighter">
+<!-- <p class="mt-4 text-[10px] text-center text-stone-500 font-bold uppercase tracking-tighter">
           Requires secure login session
         </p>
       </div>
