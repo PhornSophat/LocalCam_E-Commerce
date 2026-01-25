@@ -1,4 +1,4 @@
-<template>
+git <template>
   <AdminLayout>
     <div class="space-y-6">
       <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -47,7 +47,7 @@
 
       <div
         v-if="userError"
-        class="flex flex-col gap-3 p-6 text-sm border bg-red-500/10 border-red-500/40 rounded-2xl"
+        class="flex items-center justify-between gap-3 p-4 text-sm font-medium border text-amber-200 bg-amber-500/10 border-amber-500/40 rounded-2xl"
       >
         <div class="flex items-start justify-between gap-3">
           <div>
