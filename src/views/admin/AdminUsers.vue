@@ -1,4 +1,4 @@
-<template>
+git <template>
   <AdminLayout>
     <div class="space-y-6">
       <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -16,7 +16,7 @@
               v-model="search"
               type="text"
               placeholder="Search by name or email"
-              class="w-full px-4 py-2 text-sm text-white transition-colors bg-slate-800 border border-slate-700 rounded-xl focus:border-indigo-500 focus:outline-none"
+              class="w-full px-4 py-2 text-sm text-white transition-colors border bg-slate-800 border-slate-700 rounded-xl focus:border-indigo-500 focus:outline-none"
             />
             <button
               v-if="search"
@@ -28,7 +28,7 @@
           </div>
           <select
             v-model="sortKey"
-            class="px-4 py-2 text-sm font-black uppercase transition-colors bg-slate-800 border border-slate-700 rounded-xl text-slate-200 focus:border-indigo-500 focus:outline-none"
+            class="px-4 py-2 text-sm font-black uppercase transition-colors border bg-slate-800 border-slate-700 rounded-xl text-slate-200 focus:border-indigo-500 focus:outline-none"
           >
             <option value="created_at">Newest</option>
             <option value="name">Name</option>
@@ -47,7 +47,7 @@
 
       <div
         v-if="userError"
-        class="flex items-center justify-between gap-3 p-4 text-sm font-medium text-amber-200 bg-amber-500/10 border border-amber-500/40 rounded-2xl"
+        class="flex items-center justify-between gap-3 p-4 text-sm font-medium border text-amber-200 bg-amber-500/10 border-amber-500/40 rounded-2xl"
       >
         <span>{{ userError }}</span>
         <button
@@ -60,7 +60,7 @@
 
       <div
         v-else-if="usersDerivedFromOrders"
-        class="flex items-center justify-between gap-3 p-4 text-sm font-medium text-indigo-200 bg-indigo-500/10 border border-indigo-500/40 rounded-2xl"
+        class="flex items-center justify-between gap-3 p-4 text-sm font-medium text-indigo-200 border bg-indigo-500/10 border-indigo-500/40 rounded-2xl"
       >
         <span>
           Showing users derived from recent orders. To list all users, ensure the Supabase
